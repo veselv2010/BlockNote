@@ -14704,26 +14704,21 @@ img.ProseMirror-separator {
       content: "blockGroup"
     })
   ];
-  class BubbleMenuView {
+  class FormattingToolbarView {
     constructor({
       editor,
-      bubbleMenuFactory,
+      formattingToolbarFactory,
       view,
       shouldShow
     }) {
       __publicField(this, "editor");
       __publicField(this, "view");
-      __publicField(this, "bubbleMenuParams");
-      __publicField(this, "bubbleMenu");
+      __publicField(this, "formattingToolbarParams");
+      __publicField(this, "formattingToolbar");
       __publicField(this, "preventHide", false);
       __publicField(this, "preventShow", false);
-      __publicField(this, "menuIsOpen", false);
-      __publicField(this, "shouldShow", ({
-        view,
-        state,
-        from,
-        to
-      }) => {
+      __publicField(this, "toolbarIsOpen", false);
+      __publicField(this, "shouldShow", ({ view, state, from, to }) => {
         const { doc: doc2, selection } = state;
         const { empty: empty2 } = selection;
         const isEmptyTextBlock = !doc2.textBetween(from, to).length && isTextSelection(state.selection);
@@ -14737,8 +14732,8 @@ img.ProseMirror-separator {
         setTimeout(() => this.update(this.editor.view));
       });
       __publicField(this, "dragstartHandler", () => {
-        this.bubbleMenu.hide();
-        this.menuIsOpen = false;
+        this.formattingToolbar.hide();
+        this.toolbarIsOpen = false;
       });
       __publicField(this, "focusHandler", () => {
         setTimeout(() => this.update(this.editor.view));
@@ -14749,16 +14744,22 @@ img.ProseMirror-separator {
           this.preventHide = false;
           return;
         }
-        if ((event == null ? void 0 : event.relatedTarget) && ((_b = (_a = this.bubbleMenu.element) == null ? void 0 : _a.parentNode) == null ? void 0 : _b.contains(event.relatedTarget))) {
+        if ((event == null ? void 0 : event.relatedTarget) && ((_b = (_a = this.formattingToolbar.element) == null ? void 0 : _a.parentNode) == null ? void 0 : _b.contains(
+          event.relatedTarget
+        ))) {
           return;
         }
-        this.bubbleMenu.hide();
-        this.menuIsOpen = false;
+        if (this.toolbarIsOpen) {
+          this.formattingToolbar.hide();
+          this.toolbarIsOpen = false;
+        }
       });
       this.editor = editor;
       this.view = view;
-      this.bubbleMenuParams = this.initBubbleMenuParams();
-      this.bubbleMenu = bubbleMenuFactory(this.bubbleMenuParams);
+      this.formattingToolbarParams = this.initFormattingToolbarParams();
+      this.formattingToolbar = formattingToolbarFactory(
+        this.formattingToolbarParams
+      );
       if (shouldShow) {
         this.shouldShow = shouldShow;
       }
@@ -14787,25 +14788,25 @@ img.ProseMirror-separator {
         from,
         to
       });
-      if (!this.menuIsOpen && !this.preventShow && (shouldShow || this.preventHide)) {
-        this.updateBubbleMenuParams();
-        this.bubbleMenu.show(this.bubbleMenuParams);
-        this.menuIsOpen = true;
-        this.bubbleMenu.element.addEventListener(
+      if (!this.toolbarIsOpen && !this.preventShow && (shouldShow || this.preventHide)) {
+        this.updateFormattingToolbarParams();
+        this.formattingToolbar.show(this.formattingToolbarParams);
+        this.toolbarIsOpen = true;
+        this.formattingToolbar.element.addEventListener(
           "mousedown",
           (event) => event.preventDefault()
         );
         return;
       }
-      if (this.menuIsOpen && !this.preventShow && (shouldShow || this.preventHide)) {
-        this.updateBubbleMenuParams();
-        this.bubbleMenu.update(this.bubbleMenuParams);
+      if (this.toolbarIsOpen && !this.preventShow && (shouldShow || this.preventHide)) {
+        this.updateFormattingToolbarParams();
+        this.formattingToolbar.update(this.formattingToolbarParams);
         return;
       }
-      if (this.menuIsOpen && !this.preventHide && (!shouldShow || this.preventShow)) {
-        this.bubbleMenu.hide();
-        this.menuIsOpen = false;
-        this.bubbleMenu.element.removeEventListener(
+      if (this.toolbarIsOpen && !this.preventHide && (!shouldShow || this.preventShow)) {
+        this.formattingToolbar.hide();
+        this.toolbarIsOpen = false;
+        this.formattingToolbar.element.removeEventListener(
           "mousedown",
           (event) => event.preventDefault()
         );
@@ -14833,7 +14834,7 @@ img.ProseMirror-separator {
       }
       return posToDOMRect(this.editor.view, from, to);
     }
-    initBubbleMenuParams() {
+    initFormattingToolbarParams() {
       return {
         boldIsActive: this.editor.isActive("bold"),
         toggleBold: () => {
@@ -14856,7 +14857,7 @@ img.ProseMirror-separator {
           this.editor.commands.toggleStrike();
         },
         hyperlinkIsActive: this.editor.isActive("link"),
-        activeHyperlinkUrl: this.editor.getAttributes("link").href,
+        activeHyperlinkUrl: this.editor.getAttributes("link").href ? this.editor.getAttributes("link").href : "",
         activeHyperlinkText: this.editor.state.doc.textBetween(
           this.editor.state.selection.from,
           this.editor.state.selection.to
@@ -14911,43 +14912,46 @@ img.ProseMirror-separator {
         editorElement: this.editor.options.element
       };
     }
-    updateBubbleMenuParams() {
-      this.bubbleMenuParams.boldIsActive = this.editor.isActive("bold");
-      this.bubbleMenuParams.italicIsActive = this.editor.isActive("italic");
-      this.bubbleMenuParams.underlineIsActive = this.editor.isActive("underline");
-      this.bubbleMenuParams.strikeIsActive = this.editor.isActive("strike");
-      this.bubbleMenuParams.hyperlinkIsActive = this.editor.isActive("link");
-      this.bubbleMenuParams.activeHyperlinkUrl = this.editor.getAttributes("link").href;
-      this.bubbleMenuParams.activeHyperlinkText = this.editor.state.doc.textBetween(
+    updateFormattingToolbarParams() {
+      this.formattingToolbarParams.boldIsActive = this.editor.isActive("bold");
+      this.formattingToolbarParams.italicIsActive = this.editor.isActive("italic");
+      this.formattingToolbarParams.underlineIsActive = this.editor.isActive("underline");
+      this.formattingToolbarParams.strikeIsActive = this.editor.isActive("strike");
+      this.formattingToolbarParams.hyperlinkIsActive = this.editor.isActive("link");
+      this.formattingToolbarParams.activeHyperlinkUrl = this.editor.getAttributes(
+        "link"
+      ).href ? this.editor.getAttributes("link").href : "";
+      this.formattingToolbarParams.activeHyperlinkText = this.editor.state.doc.textBetween(
         this.editor.state.selection.from,
         this.editor.state.selection.to
       );
-      this.bubbleMenuParams.paragraphIsActive = this.editor.state.selection.$from.node().type.name === "textContent";
-      this.bubbleMenuParams.headingIsActive = this.editor.state.selection.$from.node().type.name === "headingContent";
-      this.bubbleMenuParams.activeHeadingLevel = this.editor.state.selection.$from.node().attrs["headingLevel"];
-      this.bubbleMenuParams.listItemIsActive = this.editor.state.selection.$from.node().type.name === "listItemContent";
-      this.bubbleMenuParams.activeListItemType = this.editor.state.selection.$from.node().attrs["listItemType"];
-      this.bubbleMenuParams.selectionBoundingBox = this.getSelectionBoundingBox();
+      this.formattingToolbarParams.paragraphIsActive = this.editor.state.selection.$from.node().type.name === "textContent";
+      this.formattingToolbarParams.headingIsActive = this.editor.state.selection.$from.node().type.name === "headingContent";
+      this.formattingToolbarParams.activeHeadingLevel = this.editor.state.selection.$from.node().attrs["headingLevel"];
+      this.formattingToolbarParams.listItemIsActive = this.editor.state.selection.$from.node().type.name === "listItemContent";
+      this.formattingToolbarParams.activeListItemType = this.editor.state.selection.$from.node().attrs["listItemType"];
+      this.formattingToolbarParams.selectionBoundingBox = this.getSelectionBoundingBox();
     }
   }
-  const createBubbleMenuPlugin = (options) => {
+  const createFormattingToolbarPlugin = (options) => {
     return new Plugin({
-      key: new PluginKey("BubbleMenuPlugin"),
-      view: (view) => new BubbleMenuView({ view, ...options })
+      key: new PluginKey("FormattingToolbarPlugin"),
+      view: (view) => new FormattingToolbarView({ view, ...options })
     });
   };
-  const BubbleMenuExtension = Extension.create({
-    name: "BubbleMenuExtension",
+  const FormattingToolbarExtension = Extension.create({
+    name: "FormattingToolbarExtension",
     addProseMirrorPlugins() {
-      if (!this.options.bubbleMenuFactory) {
-        console.warn("factories not defined for BubbleMenuExtension");
-        return [];
+      if (!this.options.formattingToolbarFactory) {
+        throw new Error(
+          "UI Element factory not defined for FormattingToolbarExtension"
+        );
       }
       return [
-        createBubbleMenuPlugin({
+        createFormattingToolbarPlugin({
           editor: this.editor,
-          bubbleMenuFactory: this.options.bubbleMenuFactory,
-          pluginKey: new PluginKey("BubbleMenuPlugin")
+          formattingToolbarFactory: this.options.formattingToolbarFactory,
+          pluginKey: new PluginKey("FormattingToolbarPlugin")
         })
       ];
     }
@@ -20709,6 +20713,9 @@ img.ProseMirror-separator {
           }
           return false;
         },
+        handleClick(view) {
+          deactivate(view);
+        },
         decorations(state) {
           const { active, range, decorationId, type } = this.getState(
             state
@@ -20855,20 +20862,19 @@ img.ProseMirror-separator {
     addOptions() {
       return {
         commands: defaultCommands,
-        suggestionsMenuFactory: void 0
+        slashMenuFactory: void 0
       };
     },
     addProseMirrorPlugins() {
-      if (!this.options.suggestionsMenuFactory) {
-        console.warn("factories not defined for SlashMenuExtension");
-        return [];
+      if (!this.options.slashMenuFactory) {
+        throw new Error("UI Element factory not defined for SlashMenuExtension");
       }
       return [
         createSuggestionPlugin({
           pluginKey: SlashMenuPluginKey,
           editor: this.editor,
           char: "/",
-          suggestionsMenuFactory: this.options.suggestionsMenuFactory,
+          suggestionsMenuFactory: this.options.slashMenuFactory,
           items: (query) => {
             const commands2 = [];
             for (const key in this.options.commands) {
@@ -20883,6 +20889,14 @@ img.ProseMirror-separator {
       ];
     }
   });
+  const bnEditor = "_bnEditor_xixap_3";
+  const bnRoot = "_bnRoot_xixap_13";
+  const dragPreview = "_dragPreview_xixap_27";
+  const styles = {
+    bnEditor,
+    bnRoot,
+    dragPreview
+  };
   const serializeForClipboard = __serializeForClipboard;
   let horizontalAnchor;
   let dragImageElement;
@@ -20981,6 +20995,7 @@ img.ProseMirror-separator {
       }
     }
     dragImageElement = parentClone;
+    dragImageElement.className = styles.dragPreview;
     document.body.appendChild(dragImageElement);
   }
   function unsetDragImage() {
@@ -21025,173 +21040,178 @@ img.ProseMirror-separator {
       view.dragging = { slice, move: true };
     }
   }
-  const createDraggableBlocksPlugin = (options) => {
-    let blockButtonsVisible = false;
-    let blockButtonsFrozen = false;
-    function addBlock(coords) {
-      blockButtonsFrozen = true;
-      const pos = options.editor.view.posAtCoords(coords);
+  class BlockMenuView {
+    constructor({
+      editor,
+      blockMenuFactory,
+      horizontalPosAnchoredAtRoot
+    }) {
+      __publicField(this, "editor");
+      __publicField(this, "horizontalPosAnchoredAtRoot");
+      __publicField(this, "blockMenuParams");
+      __publicField(this, "blockMenu");
+      __publicField(this, "menuOpen", false);
+      __publicField(this, "menuFrozen", false);
+      __publicField(this, "blockID");
+      this.editor = editor;
+      this.horizontalPosAnchoredAtRoot = horizontalPosAnchoredAtRoot;
+      this.blockMenuParams = {
+        addBlock: () => this.addBlock({ left: 0, top: 0 }),
+        deleteBlock: () => this.deleteBlock({ left: 0, top: 0 }),
+        blockDragStart: (event) => dragStart(event, this.editor.view),
+        blockDragEnd: () => unsetDragImage(),
+        freezeMenu: () => {
+          this.menuFrozen = true;
+        },
+        unfreezeMenu: () => {
+          this.menuFrozen = false;
+        },
+        blockBoundingBox: new DOMRect()
+      };
+      this.blockMenu = blockMenuFactory(this.blockMenuParams);
+      document.body.addEventListener(
+        "mousemove",
+        (event) => {
+          if (this.menuFrozen) {
+            return;
+          }
+          const coords = {
+            left: this.editor.view.dom.clientWidth / 2,
+            top: event.clientY
+          };
+          const block2 = getDraggableBlockFromCoords(coords, this.editor.view);
+          if (!block2) {
+            if (this.menuOpen) {
+              this.menuOpen = false;
+              this.blockMenu.hide();
+            }
+            return;
+          }
+          if (this.menuOpen && this.blockID === block2.id) {
+            return;
+          }
+          this.blockID = block2.id;
+          const blockContent2 = block2.node.firstChild;
+          if (!blockContent2) {
+            return;
+          }
+          const blockBoundingBox = blockContent2.getBoundingClientRect();
+          this.blockMenuParams.addBlock = () => this.addBlock({
+            left: blockBoundingBox.left,
+            top: blockBoundingBox.top
+          });
+          this.blockMenuParams.deleteBlock = () => this.deleteBlock({
+            left: blockBoundingBox.left,
+            top: blockBoundingBox.top
+          });
+          this.blockMenuParams.blockBoundingBox = new DOMRect(
+            this.horizontalPosAnchoredAtRoot ? getHorizontalAnchor() : blockBoundingBox.x,
+            blockBoundingBox.y,
+            blockBoundingBox.width,
+            blockBoundingBox.height
+          );
+          if (!this.menuOpen) {
+            this.menuOpen = true;
+            this.blockMenu.show(this.blockMenuParams);
+          } else {
+            this.blockMenu.update(this.blockMenuParams);
+          }
+        },
+        true
+      );
+      document.body.addEventListener(
+        "mousedown",
+        (event) => {
+          var _a;
+          if ((_a = this.blockMenu.element) == null ? void 0 : _a.contains(event.target)) {
+            return;
+          }
+          if (this.menuOpen) {
+            this.menuOpen = false;
+            this.blockMenu.hide();
+          }
+          this.menuFrozen = false;
+        },
+        true
+      );
+      document.body.addEventListener(
+        "keydown",
+        () => {
+          if (this.menuOpen) {
+            this.menuOpen = false;
+            this.blockMenu.hide();
+          }
+          this.menuFrozen = false;
+        },
+        true
+      );
+    }
+    destroy() {
+      if (this.menuOpen) {
+        this.menuOpen = false;
+        this.blockMenu.hide();
+      }
+    }
+    addBlock(coords) {
+      this.menuOpen = false;
+      this.menuFrozen = true;
+      this.blockMenu.hide();
+      const pos = this.editor.view.posAtCoords(coords);
       if (!pos) {
         return;
       }
-      const blockInfo = getBlockInfoFromPos(options.editor.state.doc, pos.pos);
+      const blockInfo = getBlockInfoFromPos(this.editor.state.doc, pos.pos);
       if (blockInfo === void 0) {
         return;
       }
+      console.log(blockInfo);
       const { contentNode, endPos } = blockInfo;
       if (contentNode.textContent.length !== 0) {
         const newBlockInsertionPos = endPos + 1;
         const newBlockContentPos = newBlockInsertionPos + 2;
-        options.editor.chain().BNCreateBlock(newBlockInsertionPos).BNSetContentType(newBlockContentPos, "textContent").setTextSelection(newBlockContentPos).run();
+        this.editor.chain().BNCreateBlock(newBlockInsertionPos).BNSetContentType(newBlockContentPos, "textContent").setTextSelection(newBlockContentPos).run();
       }
-      options.editor.view.focus();
-      options.editor.view.dispatch(
-        options.editor.view.state.tr.scrollIntoView().setMeta(SlashMenuPluginKey, {
+      this.editor.view.focus();
+      this.editor.view.dispatch(
+        this.editor.view.state.tr.scrollIntoView().setMeta(SlashMenuPluginKey, {
           activate: true,
           type: "drag"
         })
       );
     }
-    function deleteBlock(coords) {
-      dragHandleMenu.hide();
-      const pos = options.editor.view.posAtCoords(coords);
+    deleteBlock(coords) {
+      this.menuOpen = false;
+      this.blockMenu.hide();
+      const pos = this.editor.view.posAtCoords(coords);
       if (!pos) {
         return;
       }
-      options.editor.commands.BNDeleteBlock(pos.pos);
+      this.editor.commands.BNDeleteBlock(pos.pos);
     }
-    const addBlockButtonParams = {
-      addBlock: () => addBlock({ left: 0, top: 0 }),
-      blockBoundingBox: new DOMRect()
-    };
-    const dragHandleParams = {
-      blockBoundingBox: new DOMRect()
-    };
-    const dragHandleMenuParams = {
-      deleteBlock: () => deleteBlock({ left: 0, top: 0 }),
-      dragHandleBoundingBox: new DOMRect()
-    };
-    const addBlockButton = options.addBlockButtonFactory(addBlockButtonParams);
-    const dragHandle = options.dragHandleFactory(dragHandleParams);
-    const dragHandleMenu = options.dragHandleMenuFactory(dragHandleMenuParams);
-    const dragStartCallback = (event) => dragStart(event, options.editor.view);
-    const dragEndCallback = (_event) => unsetDragImage();
-    const clickCallback = (_event) => {
-      dragHandleMenu.show(dragHandleMenuParams);
-      blockButtonsFrozen = true;
-    };
-    function addDragHandleListeners() {
-      dragHandle.element.addEventListener("dragstart", dragStartCallback);
-      dragHandle.element.addEventListener("dragend", dragEndCallback);
-      dragHandle.element.addEventListener("click", clickCallback);
-    }
-    function removeDragHandleListeners() {
-      dragHandle.element.removeEventListener("dragstart", dragStartCallback);
-      dragHandle.element.removeEventListener("dragend", dragEndCallback);
-      dragHandle.element.removeEventListener("click", clickCallback);
-    }
-    window.addEventListener("scroll", () => {
-      blockButtonsVisible = false;
-      blockButtonsFrozen = false;
-      addBlockButton.hide();
-      dragHandle.hide();
-      removeDragHandleListeners();
-      dragHandleMenu.hide();
-    });
+  }
+  const createDraggableBlocksPlugin = (options) => {
     return new Plugin({
       key: new PluginKey("DraggableBlocksPlugin"),
-      view() {
-        return {
-          destroy() {
-            addBlockButton.hide();
-            dragHandle.hide();
-            removeDragHandleListeners();
-            dragHandleMenu.hide();
-          }
-        };
-      },
-      props: {
-        handleKeyDown(_view, _event) {
-          blockButtonsVisible = false;
-          blockButtonsFrozen = false;
-          addBlockButton.hide();
-          dragHandle.hide();
-          removeDragHandleListeners();
-          return false;
-        },
-        handleDOMEvents: {
-          mouseleave(_view, _event) {
-            return true;
-          },
-          mousedown(_view, _event) {
-            blockButtonsVisible = false;
-            blockButtonsFrozen = false;
-            addBlockButton.hide();
-            dragHandle.hide();
-            removeDragHandleListeners();
-            dragHandleMenu.hide();
-            return false;
-          },
-          mousemove(view, event) {
-            if (blockButtonsFrozen) {
-              return true;
-            }
-            const coords = {
-              left: view.dom.clientWidth / 2,
-              top: event.clientY
-            };
-            const block2 = getDraggableBlockFromCoords(coords, view);
-            if (!block2) {
-              console.warn("Perhaps we should hide element?");
-              return true;
-            }
-            const blockContent2 = block2.node.firstChild;
-            if (!blockContent2) {
-              return true;
-            }
-            const blockBoundingBox = blockContent2.getBoundingClientRect();
-            blockBoundingBox.x = getHorizontalAnchor();
-            addBlockButtonParams.addBlock = () => addBlock({
-              left: blockBoundingBox.left,
-              top: blockBoundingBox.top
-            });
-            addBlockButtonParams.blockBoundingBox = blockBoundingBox;
-            dragHandleParams.blockBoundingBox = blockBoundingBox;
-            dragHandleMenuParams.deleteBlock = () => deleteBlock({
-              left: blockBoundingBox.left,
-              top: blockBoundingBox.top
-            });
-            dragHandleMenuParams.dragHandleBoundingBox = blockBoundingBox;
-            if (!blockButtonsVisible) {
-              blockButtonsVisible = true;
-              dragHandle.show(dragHandleParams);
-              addBlockButton.show(addBlockButtonParams);
-              dragHandle.element.setAttribute("draggable", "true");
-              addDragHandleListeners();
-            } else {
-              dragHandle.update(dragHandleParams);
-              addBlockButton.update(addBlockButtonParams);
-            }
-            return true;
-          }
-        }
-      }
+      view: () => new BlockMenuView({
+        editor: options.editor,
+        blockMenuFactory: options.blockSideMenuFactory,
+        horizontalPosAnchoredAtRoot: true
+      })
     });
   };
   const DraggableBlocksExtension = Extension.create({
     name: "DraggableBlocksExtension",
     priority: 1e3,
     addProseMirrorPlugins() {
-      if (!this.options.addBlockButtonFactory || !this.options.dragHandleFactory || !this.options.dragHandleMenuFactory) {
-        console.warn("factories not defined for DraggableBlocksExtension");
-        return [];
+      if (!this.options.blockSideMenuFactory) {
+        throw new Error(
+          "UI Element factory not defined for DraggableBlocksExtension"
+        );
       }
       return [
         createDraggableBlocksPlugin({
           editor: this.editor,
-          addBlockButtonFactory: this.options.addBlockButtonFactory,
-          dragHandleFactory: this.options.dragHandleFactory,
-          dragHandleMenuFactory: this.options.dragHandleMenuFactory
+          blockSideMenuFactory: this.options.blockSideMenuFactory
         })
       ];
     }
@@ -22182,15 +22202,12 @@ img.ProseMirror-separator {
       return plugins;
     }
   });
-  const PLUGIN_KEY = new PluginKey("HyperlinkMenuPlugin");
-  class HyperlinkHoverMenuView {
-    constructor({
-      editor,
-      hyperlinkHoverMenuFactory
-    }) {
+  const PLUGIN_KEY = new PluginKey("HyperlinkToolbarPlugin");
+  class HyperlinkToolbarView {
+    constructor({ editor, hyperlinkToolbarFactory }) {
       __publicField(this, "editor");
-      __publicField(this, "hyperlinkHoverMenuParams");
-      __publicField(this, "hyperlinkHoverMenu");
+      __publicField(this, "hyperlinkToolbarParams");
+      __publicField(this, "hyperlinkToolbar");
       __publicField(this, "menuUpdateTimer");
       __publicField(this, "startMenuUpdateTimer");
       __publicField(this, "stopMenuUpdateTimer");
@@ -22201,9 +22218,9 @@ img.ProseMirror-separator {
       __publicField(this, "hyperlinkMark");
       __publicField(this, "hyperlinkMarkRange");
       this.editor = editor;
-      this.hyperlinkHoverMenuParams = this.initHyperlinkHoverMenuParams();
-      this.hyperlinkHoverMenu = hyperlinkHoverMenuFactory(
-        this.hyperlinkHoverMenuParams
+      this.hyperlinkToolbarParams = this.initHyperlinkToolbarParams();
+      this.hyperlinkToolbar = hyperlinkToolbarFactory(
+        this.hyperlinkToolbarParams
       );
       this.startMenuUpdateTimer = () => {
         this.menuUpdateTimer = setTimeout(() => {
@@ -22277,35 +22294,35 @@ img.ProseMirror-separator {
         this.hyperlinkMarkRange = this.keyboardHoveredHyperlinkMarkRange;
       }
       if (this.hyperlinkMark) {
-        this.updateHyperlinkHoverMenuParams();
+        this.updateHyperlinkToolbarParams();
         if (!prevHyperlinkMark) {
-          this.hyperlinkHoverMenu.show(this.hyperlinkHoverMenuParams);
-          (_a = this.hyperlinkHoverMenu.element) == null ? void 0 : _a.addEventListener(
+          this.hyperlinkToolbar.show(this.hyperlinkToolbarParams);
+          (_a = this.hyperlinkToolbar.element) == null ? void 0 : _a.addEventListener(
             "mouseleave",
             this.startMenuUpdateTimer
           );
-          (_b = this.hyperlinkHoverMenu.element) == null ? void 0 : _b.addEventListener(
+          (_b = this.hyperlinkToolbar.element) == null ? void 0 : _b.addEventListener(
             "mouseenter",
             this.stopMenuUpdateTimer
           );
           return;
         }
-        this.hyperlinkHoverMenu.update(this.hyperlinkHoverMenuParams);
+        this.hyperlinkToolbar.update(this.hyperlinkToolbarParams);
       }
-      if (prevHyperlinkMark && !this.hyperlinkMark) {
-        (_c = this.hyperlinkHoverMenu.element) == null ? void 0 : _c.removeEventListener(
+      if (!this.hyperlinkMark && prevHyperlinkMark) {
+        (_c = this.hyperlinkToolbar.element) == null ? void 0 : _c.removeEventListener(
           "mouseleave",
           this.startMenuUpdateTimer
         );
-        (_d = this.hyperlinkHoverMenu.element) == null ? void 0 : _d.removeEventListener(
+        (_d = this.hyperlinkToolbar.element) == null ? void 0 : _d.removeEventListener(
           "mouseenter",
           this.stopMenuUpdateTimer
         );
-        this.hyperlinkHoverMenu.hide();
+        this.hyperlinkToolbar.hide();
         return;
       }
     }
-    initHyperlinkHoverMenuParams() {
+    initHyperlinkToolbarParams() {
       return {
         url: "",
         text: "",
@@ -22322,7 +22339,7 @@ img.ProseMirror-separator {
           );
           this.editor.view.dispatch(tr);
           this.editor.view.focus();
-          this.hyperlinkHoverMenu.hide();
+          this.hyperlinkToolbar.hide();
         },
         deleteHyperlink: () => {
           this.editor.view.dispatch(
@@ -22333,22 +22350,22 @@ img.ProseMirror-separator {
             ).setMeta("preventAutolink", true)
           );
           this.editor.view.focus();
-          this.hyperlinkHoverMenu.hide();
+          this.hyperlinkToolbar.hide();
         },
         boundingBox: new DOMRect(),
         editorElement: this.editor.options.element
       };
     }
-    updateHyperlinkHoverMenuParams() {
+    updateHyperlinkToolbarParams() {
       if (this.hyperlinkMark) {
-        this.hyperlinkHoverMenuParams.url = this.hyperlinkMark.attrs.href;
-        this.hyperlinkHoverMenuParams.text = this.editor.view.state.doc.textBetween(
+        this.hyperlinkToolbarParams.url = this.hyperlinkMark.attrs.href ? this.hyperlinkMark.attrs.href : "";
+        this.hyperlinkToolbarParams.text = this.editor.view.state.doc.textBetween(
           this.hyperlinkMarkRange.from,
           this.hyperlinkMarkRange.to
         );
       }
       if (this.hyperlinkMarkRange) {
-        this.hyperlinkHoverMenuParams.boundingBox = posToDOMRect(
+        this.hyperlinkToolbarParams.boundingBox = posToDOMRect(
           this.editor.view,
           this.hyperlinkMarkRange.from,
           this.hyperlinkMarkRange.to
@@ -22356,27 +22373,26 @@ img.ProseMirror-separator {
       }
     }
   }
-  const createHyperlinkMenuPlugin = (editor, options) => {
+  const createHyperlinkToolbarPlugin = (editor, options) => {
     return new Plugin({
       key: PLUGIN_KEY,
-      view: () => new HyperlinkHoverMenuView({
+      view: () => new HyperlinkToolbarView({
         editor,
-        hyperlinkHoverMenuFactory: options.hyperlinkMenuFactory
+        hyperlinkToolbarFactory: options.hyperlinkToolbarFactory
       })
     });
   };
   const Hyperlink = Link.extend({
     priority: 500,
     addProseMirrorPlugins() {
-      var _a, _b;
-      if (!this.options.hyperlinkMenuFactory) {
-        console.warn("factories not defined for Hyperlink");
-        return [...((_a = this.parent) == null ? void 0 : _a.call(this)) || []];
+      var _a;
+      if (!this.options.hyperlinkToolbarFactory) {
+        throw new Error("UI Element factory not defined for HyperlinkMark");
       }
       return [
-        ...((_b = this.parent) == null ? void 0 : _b.call(this)) || [],
-        createHyperlinkMenuPlugin(this.editor, {
-          hyperlinkMenuFactory: this.options.hyperlinkMenuFactory
+        ...((_a = this.parent) == null ? void 0 : _a.call(this)) || [],
+        createHyperlinkToolbarPlugin(this.editor, {
+          hyperlinkToolbarFactory: this.options.hyperlinkToolbarFactory
         })
       ];
     }
@@ -22759,7 +22775,7 @@ img.ProseMirror-separator {
     topNode: true,
     content: "block+"
   });
-  const getBlockNoteExtensions = () => {
+  const getBlockNoteExtensions = (uiFactories) => {
     const ret = [
       extensions.ClipboardTextSerializer,
       extensions.Commands,
@@ -22784,25 +22800,44 @@ img.ProseMirror-separator {
       Italic,
       Strike,
       Underline,
-      Hyperlink,
       FixedParagraph,
       ...blocks,
-      DraggableBlocksExtension,
       Dropcursor.configure({ width: 5, color: "#ddeeff" }),
-      BubbleMenuExtension,
       History,
-      SlashMenuExtension,
       TrailingNode
     ];
+    if (uiFactories.blockSideMenuFactory) {
+      ret.push(
+        DraggableBlocksExtension.configure({
+          blockSideMenuFactory: uiFactories.blockSideMenuFactory
+        })
+      );
+    }
+    if (uiFactories.formattingToolbarFactory) {
+      ret.push(
+        FormattingToolbarExtension.configure({
+          formattingToolbarFactory: uiFactories.formattingToolbarFactory
+        })
+      );
+    }
+    if (uiFactories.hyperlinkToolbarFactory) {
+      ret.push(
+        Hyperlink.configure({
+          hyperlinkToolbarFactory: uiFactories.hyperlinkToolbarFactory
+        })
+      );
+    } else {
+      ret.push(Link);
+    }
+    if (uiFactories.slashMenuFactory) {
+      ret.push(
+        SlashMenuExtension.configure({
+          slashMenuFactory: uiFactories.slashMenuFactory
+        })
+      );
+    }
     return ret;
   };
-  const bnEditor = "_bnEditor_h90dd_3";
-  const bnRoot = "_bnRoot_h90dd_13";
-  const styles = {
-    bnEditor,
-    bnRoot
-  };
-  const blockNoteExtensions = getBlockNoteExtensions();
   const blockNoteOptions = {
     enableInputRules: true,
     enablePasteRules: true,
@@ -22812,33 +22847,10 @@ img.ProseMirror-separator {
     constructor(options = {}) {
       __publicField(this, "tiptapEditor");
       var _a, _b, _c;
+      const blockNoteExtensions = getBlockNoteExtensions(
+        options.uiFactories || {}
+      );
       let extensions2 = options.disableHistoryExtension ? blockNoteExtensions.filter((e) => e.name !== "history") : blockNoteExtensions;
-      extensions2 = extensions2.map((extension) => {
-        var _a2, _b2, _c2;
-        if (extension.name === "BubbleMenuExtension" && ((_a2 = options.uiFactories) == null ? void 0 : _a2.bubbleMenuFactory)) {
-          return extension.configure({
-            bubbleMenuFactory: options.uiFactories.bubbleMenuFactory
-          });
-        }
-        if (extension.name === "link" && ((_b2 = options.uiFactories) == null ? void 0 : _b2.hyperlinkMenuFactory)) {
-          return extension.configure({
-            hyperlinkMenuFactory: options.uiFactories.hyperlinkMenuFactory
-          });
-        }
-        if (extension.name === "slash-command" && ((_c2 = options.uiFactories) == null ? void 0 : _c2.suggestionsMenuFactory)) {
-          return extension.configure({
-            suggestionsMenuFactory: options.uiFactories.suggestionsMenuFactory
-          });
-        }
-        if (extension.name === "DraggableBlocksExtension" && options.uiFactories) {
-          return extension.configure({
-            addBlockButtonFactory: options.uiFactories.addBlockButtonFactory,
-            dragHandleFactory: options.uiFactories.dragHandleFactory,
-            dragHandleMenuFactory: options.uiFactories.dragHandleMenuFactory
-          });
-        }
-        return extension;
-      });
       const tiptapOptions = {
         ...blockNoteOptions,
         ...options,
@@ -22859,6 +22871,8 @@ img.ProseMirror-separator {
   }
   exports2.BlockNoteEditor = BlockNoteEditor;
   exports2.Document = Document;
+  exports2.SlashMenuGroups = SlashMenuGroups;
+  exports2.SlashMenuItem = SlashMenuItem;
   exports2.getBlockNoteExtensions = getBlockNoteExtensions;
   Object.defineProperties(exports2, { __esModule: { value: true }, [Symbol.toStringTag]: { value: "Module" } });
 });
