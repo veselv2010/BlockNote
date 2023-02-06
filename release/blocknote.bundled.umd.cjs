@@ -15148,7 +15148,7 @@ img.ProseMirror-separator {
           type: blockInfo.contentType.name,
           props: blockInfo.contentNode.attrs
         },
-        selectionBoundingBox: this.getSelectionBoundingBox()
+        referenceRect: this.getSelectionBoundingBox()
       };
     }
   }
@@ -20718,7 +20718,7 @@ img.ProseMirror-separator {
       return {
         items: this.pluginState.items,
         selectedItemIndex: this.pluginState.selectedItemIndex,
-        queryStartBoundingBox: decorationNode.getBoundingClientRect()
+        referenceRect: decorationNode.getBoundingClientRect()
       };
     }
   }
@@ -21132,13 +21132,11 @@ img.ProseMirror-separator {
   let horizontalAnchor;
   let dragImageElement;
   function getHorizontalAnchor() {
-    if (!horizontalAnchor) {
-      const firstBlockGroup = document.querySelector(
-        ".ProseMirror > [class*='blockGroup']"
-      );
-      if (firstBlockGroup) {
-        horizontalAnchor = absoluteRect(firstBlockGroup).left;
-      }
+    const firstBlockGroup = document.querySelector(
+      ".ProseMirror > [class*='blockGroup']"
+    );
+    if (firstBlockGroup) {
+      horizontalAnchor = absoluteRect(firstBlockGroup).left;
     }
     return horizontalAnchor;
   }
@@ -21239,8 +21237,9 @@ img.ProseMirror-separator {
     if (!e.dataTransfer) {
       return;
     }
+    const editorBoundingBox = view.dom.getBoundingClientRect();
     let coords = {
-      left: view.dom.clientWidth / 2,
+      left: editorBoundingBox.left + editorBoundingBox.width / 2,
       top: e.clientY
     };
     let pos = blockPositionFromCoords(coords, view);
@@ -21293,8 +21292,9 @@ img.ProseMirror-separator {
           if (this.menuFrozen) {
             return;
           }
+          const editorBoundingBox = this.editor.view.dom.getBoundingClientRect();
           const coords = {
-            left: this.editor.view.dom.clientWidth / 2,
+            left: editorBoundingBox.left + editorBoundingBox.width / 2,
             top: event.clientY
           };
           const block2 = getDraggableBlockFromCoords(coords, this.editor.view);
@@ -21415,7 +21415,7 @@ img.ProseMirror-separator {
     getDynamicParams() {
       const blockBoundingBox = this.hoveredBlock.getBoundingClientRect();
       return {
-        blockBoundingBox: new DOMRect(
+        referenceRect: new DOMRect(
           this.horizontalPosAnchoredAtRoot ? getHorizontalAnchor() : blockBoundingBox.x,
           blockBoundingBox.y,
           blockBoundingBox.width,
@@ -22549,6 +22549,7 @@ img.ProseMirror-separator {
           return;
         }
         this.hyperlinkToolbar.render(this.getDynamicParams(), false);
+        return;
       }
       if (!this.hyperlinkMark && prevHyperlinkMark) {
         (_c = this.hyperlinkToolbar.element) == null ? void 0 : _c.removeEventListener(
@@ -22600,7 +22601,7 @@ img.ProseMirror-separator {
           this.hyperlinkMarkRange.from,
           this.hyperlinkMarkRange.to
         ),
-        boundingBox: posToDOMRect(
+        referenceRect: posToDOMRect(
           this.editor.view,
           this.hyperlinkMarkRange.from,
           this.hyperlinkMarkRange.to
