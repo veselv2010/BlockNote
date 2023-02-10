@@ -2,7 +2,7 @@
 BASIC STYLES
 */
 
-._blockOuter_6qmsf_5 {
+._blockOuter_1ltqa_5 {
   /* padding-bottom: 15px; */
   font-size: 16px;
   line-height: 1.5;
@@ -10,37 +10,31 @@ BASIC STYLES
   font-weight: normal;
 }
 
-._block_6qmsf_5 {
-  border-left: 2px solid white;
-  border-color: white;
-  transition: all 0.2s;
-}
-
-._block_6qmsf_5 {
+._block_1ltqa_5 {
   /* content: ""; */
   transition: all 0.2s;
   margin: 0px;
 }
 
-._blockContent_6qmsf_25 {
+._blockContent_1ltqa_19 {
   font-size: 1em;
   padding: 3px 0;
   transition: font-size 0.2s;
   /* display: inline-block; */
 }
 
-._blockContent_6qmsf_25::before {
+._blockContent_1ltqa_19::before {
   /* content: ""; */
   transition: all 0.2s;
   /*margin: 0px;*/
 }
 
 /* reset styles, they will be set on blockContent */
-._blockContent_6qmsf_25 p,
-._blockContent_6qmsf_25 h1,
-._blockContent_6qmsf_25 h2,
-._blockContent_6qmsf_25 h3,
-._blockContent_6qmsf_25 li {
+._blockContent_1ltqa_19 p,
+._blockContent_1ltqa_19 h1,
+._blockContent_1ltqa_19 h2,
+._blockContent_1ltqa_19 h3,
+._blockContent_1ltqa_19 li {
   margin: 0;
   padding: 0;
   font-size: inherit;
@@ -50,15 +44,15 @@ BASIC STYLES
 NESTED BLOCKS
 */
 
-._blockGroup_6qmsf_53 ._blockGroup_6qmsf_53 {
+._blockGroup_1ltqa_47 ._blockGroup_1ltqa_47 {
   margin-left: 1.5em;
 }
 
-._blockGroup_6qmsf_53 ._blockGroup_6qmsf_53 > ._blockOuter_6qmsf_5 {
+._blockGroup_1ltqa_47 ._blockGroup_1ltqa_47 > ._blockOuter_1ltqa_5 {
   position: relative;
 }
 
-._blockGroup_6qmsf_53 ._blockGroup_6qmsf_53 > ._blockOuter_6qmsf_5:not([data-prev-depth-changed])::before {
+._blockGroup_1ltqa_47 ._blockGroup_1ltqa_47 > ._blockOuter_1ltqa_5:not([data-prev-depth-changed])::before {
   content: " ";
   display: inline;
   border-left: 1px solid #ccc;
@@ -68,7 +62,7 @@ NESTED BLOCKS
   transition: all 0.2s 0.1s;
 }
 
-._blockGroup_6qmsf_53 ._blockGroup_6qmsf_53 > ._blockOuter_6qmsf_5[data-prev-depth-change="-2"]::before {
+._blockGroup_1ltqa_47 ._blockGroup_1ltqa_47 > ._blockOuter_1ltqa_5[data-prev-depth-change="-2"]::before {
   height: 0;
 }
 
@@ -106,11 +100,11 @@ NESTED BLOCKS
   --x: -5;
 }
 
-._blockOuter_6qmsf_5[data-prev-depth-change] {
+._blockOuter_1ltqa_5[data-prev-depth-change] {
   margin-left: calc(10px * var(--x));
 }
 
-._blockOuter_6qmsf_5[data-prev-depth-change] ._blockOuter_6qmsf_5[data-prev-depth-change] {
+._blockOuter_1ltqa_5[data-prev-depth-change] ._blockOuter_1ltqa_5[data-prev-depth-change] {
   margin-left: 0;
 }
 
@@ -135,21 +129,21 @@ NESTED BLOCKS
   --prev-level: 1.3em;
 }
 
-._blockOuter_6qmsf_5[data-prev-type="heading"] > ._block_6qmsf_5 > ._blockContent_6qmsf_25 {
+._blockOuter_1ltqa_5[data-prev-type="heading"] > ._block_1ltqa_5 > ._blockContent_1ltqa_19 {
   font-size: var(--prev-level);
   font-weight: bold;
 }
 
-._blockOuter_6qmsf_5:not([data-prev-type])
-  > ._block_6qmsf_5
-  > ._blockContent_6qmsf_25[data-content-type="heading"] {
+._blockOuter_1ltqa_5:not([data-prev-type])
+  > ._block_1ltqa_5
+  > ._blockContent_1ltqa_19[data-content-type="heading"] {
   font-size: var(--level);
   font-weight: bold;
 }
 
 /* LISTS */
 
-._blockContent_6qmsf_25::before {
+._blockContent_1ltqa_19::before {
   margin-right: 0;
   content: "";
 }
@@ -163,80 +157,80 @@ NESTED BLOCKS
   --prev-index: attr(data-prev-index)
 }
 
-._blockOuter_6qmsf_5[data-prev-type="numberedListItem"]:not([data-prev-index="none"])
-> ._block_6qmsf_5
-> ._blockContent_6qmsf_25::before {
+._blockOuter_1ltqa_5[data-prev-type="numberedListItem"]:not([data-prev-index="none"])
+> ._block_1ltqa_5
+> ._blockContent_1ltqa_19::before {
   margin-right: 1.2em;
   content: var(--prev-index)".";
 }
 
-._blockOuter_6qmsf_5:not([data-prev-type])
-> ._block_6qmsf_5
-> ._blockContent_6qmsf_25[data-content-type="numberedListItem"]::before {
+._blockOuter_1ltqa_5:not([data-prev-type])
+> ._block_1ltqa_5
+> ._blockContent_1ltqa_19[data-content-type="numberedListItem"]::before {
   margin-right: 1.2em;
   content: var(--index)".";
 }
 
 /* Unordered */
 /* No list nesting */
-._blockOuter_6qmsf_5[data-prev-type="bulletListItem"]
-> ._block_6qmsf_5
-> ._blockContent_6qmsf_25::before {
+._blockOuter_1ltqa_5[data-prev-type="bulletListItem"]
+> ._block_1ltqa_5
+> ._blockContent_1ltqa_19::before {
   margin-right: 1.2em;
   content: "•";
 }
 
-._blockOuter_6qmsf_5:not([data-prev-type])
-> ._block_6qmsf_5
-> ._blockContent_6qmsf_25[data-content-type="bulletListItem"]::before {
+._blockOuter_1ltqa_5:not([data-prev-type])
+> ._block_1ltqa_5
+> ._blockContent_1ltqa_19[data-content-type="bulletListItem"]::before {
   margin-right: 1.2em;
   content: "•";
 }
 
 /* 1 level of list nesting */
-[data-content-type="bulletListItem"]~._blockGroup_6qmsf_53
-> ._blockOuter_6qmsf_5[data-prev-type="bulletListItem"]
-> ._block_6qmsf_5
-> ._blockContent_6qmsf_25::before {
+[data-content-type="bulletListItem"]~._blockGroup_1ltqa_47
+> ._blockOuter_1ltqa_5[data-prev-type="bulletListItem"]
+> ._block_1ltqa_5
+> ._blockContent_1ltqa_19::before {
   margin-right: 1.2em;
   content: "◦";
 }
 
-[data-content-type="bulletListItem"]~._blockGroup_6qmsf_53
-> ._blockOuter_6qmsf_5:not([data-prev-type])
-> ._block_6qmsf_5
-> ._blockContent_6qmsf_25[data-content-type="bulletListItem"]::before {
+[data-content-type="bulletListItem"]~._blockGroup_1ltqa_47
+> ._blockOuter_1ltqa_5:not([data-prev-type])
+> ._block_1ltqa_5
+> ._blockContent_1ltqa_19[data-content-type="bulletListItem"]::before {
   margin-right: 1.2em;
   content: "◦";
 }
 
 /* 2 levels of list nesting */
-[data-content-type="bulletListItem"]~._blockGroup_6qmsf_53
-[data-content-type="bulletListItem"]~._blockGroup_6qmsf_53
-> ._blockOuter_6qmsf_5[data-prev-type="bulletListItem"]
-> ._block_6qmsf_5
-> ._blockContent_6qmsf_25::before {
+[data-content-type="bulletListItem"]~._blockGroup_1ltqa_47
+[data-content-type="bulletListItem"]~._blockGroup_1ltqa_47
+> ._blockOuter_1ltqa_5[data-prev-type="bulletListItem"]
+> ._block_1ltqa_5
+> ._blockContent_1ltqa_19::before {
   margin-right: 1.2em;
   content: "▪";
 }
 
-[data-content-type="bulletListItem"]~._blockGroup_6qmsf_53
-[data-content-type="bulletListItem"]~._blockGroup_6qmsf_53
-> ._blockOuter_6qmsf_5:not([data-prev-type])
-> ._block_6qmsf_5
-> ._blockContent_6qmsf_25[data-content-type="bulletListItem"]::before {
+[data-content-type="bulletListItem"]~._blockGroup_1ltqa_47
+[data-content-type="bulletListItem"]~._blockGroup_1ltqa_47
+> ._blockOuter_1ltqa_5:not([data-prev-type])
+> ._block_1ltqa_5
+> ._blockContent_1ltqa_19[data-content-type="bulletListItem"]::before {
   margin-right: 1.2em;
   content: "▪";
 }
 
 /* PLACEHOLDERS*/
 
-._blockContent_6qmsf_25 > :first-child {
+._blockContent_1ltqa_19 > :first-child {
   display: inline;
 }
 
-._blockContent_6qmsf_25._isEmpty_6qmsf_238 > :first-child:before,
-._blockContent_6qmsf_25._isFilter_6qmsf_239 > :first-child:before {
+._blockContent_1ltqa_19._isEmpty_1ltqa_232 > :first-child:before,
+._blockContent_1ltqa_19._isFilter_1ltqa_233 > :first-child:before {
   /*float: left; */
   content: "";
   color: #aeb8c2;
@@ -249,24 +243,115 @@ NESTED BLOCKS
 
 /* TODO: would be nicer if defined from code */
 
-._blockContent_6qmsf_25._isEmpty_6qmsf_238._hasAnchor_6qmsf_252 > :first-child:before {
+._blockContent_1ltqa_19._isEmpty_1ltqa_232._hasAnchor_1ltqa_246 > :first-child:before {
   content: "Enter text or type '/' for commands";
 }
 
-._blockContent_6qmsf_25._isFilter_6qmsf_239._hasAnchor_6qmsf_252 > :first-child:before {
+._blockContent_1ltqa_19._isFilter_1ltqa_233._hasAnchor_1ltqa_246 > :first-child:before {
   content: "Type to filter";
 }
 
-._blockContent_6qmsf_25[data-content-type="heading"]._isEmpty_6qmsf_238
+._blockContent_1ltqa_19[data-content-type="heading"]._isEmpty_1ltqa_232
   > :first-child::before {
   content: "Heading";
 }
 
-._blockContent_6qmsf_25[data-content-type="bulletListItem"]._isEmpty_6qmsf_238
+._blockContent_1ltqa_19[data-content-type="bulletListItem"]._isEmpty_1ltqa_232
 > :first-child:before,
-._blockContent_6qmsf_25[data-content-type="numberedListItem"]._isEmpty_6qmsf_238
+._blockContent_1ltqa_19[data-content-type="numberedListItem"]._isEmpty_1ltqa_232
 > :first-child:before {
   content: "List";
+}
+
+/* TEXT COLORS */
+[data-text-color="gray"] {
+  color: #9b9a97;
+}
+
+[data-text-color="brown"] {
+  color: #64473a;
+}
+
+[data-text-color="red"] {
+  color: #e03e3e;
+}
+
+[data-text-color="orange"] {
+  color: #d9730d;
+}
+
+[data-text-color="yellow"] {
+  color: #dfab01;
+}
+
+[data-text-color="green"] {
+  color: #4d6461;
+}
+
+[data-text-color="blue"] {
+  color: #0b6e99;
+}
+
+[data-text-color="purple"] {
+  color: #6940a5;
+}
+
+[data-text-color="pink"] {
+  color: #ad1a72;
+}
+
+/* BACKGROUND COLORS */
+[data-background-color="gray"] {
+  background-color: #ebeced;
+}
+
+[data-background-color="brown"] {
+  background-color: #e9e5e3;
+}
+
+[data-background-color="red"] {
+  background-color: #fbe4e4;
+}
+
+[data-background-color="orange"] {
+  background-color: #faebdd;
+}
+
+[data-background-color="yellow"] {
+  background-color: #fbf3db;
+}
+
+[data-background-color="green"] {
+  background-color: #ddedea;
+}
+
+[data-background-color="blue"] {
+  background-color: #ddebf1;
+}
+
+[data-background-color="purple"] {
+  background-color: #eae4f2;
+}
+
+[data-background-color="pink"] {
+  background-color: #f4dfeb;
+}
+
+/* TEXT ALIGNMENT */
+[data-text-alignment="left"] {
+  text-align: left;
+}
+
+[data-text-alignment="center"] {
+  text-align: center;
+}
+
+[data-text-alignment="right"] {
+  text-align: right;
+}
+
+[data-text-alignment="justify"] {
+  text-align: justify;
 }
 /* Generated using https://google-webfonts-helper.herokuapp.com/fonts/inter?subsets=latin */
 
