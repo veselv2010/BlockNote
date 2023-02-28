@@ -35889,12 +35889,12 @@ function removeUnderlines() {
   };
   return removeUnderlinesHelper;
 }
-function blockSpecToNode(blockSpec, schema) {
+function blockToNode(block2, schema) {
   let content2 = [];
-  if (typeof blockSpec.content === "string") {
-    content2.push(schema.text(blockSpec.content));
-  } else if (typeof blockSpec.content === "object") {
-    for (const styledText of blockSpec.content) {
+  if (typeof block2.content === "string") {
+    content2.push(schema.text(block2.content));
+  } else if (typeof block2.content === "object") {
+    for (const styledText of block2.content) {
       const marks = [];
       for (const style2 of styledText.styles) {
         marks.push(schema.mark(style2.type, style2.props));
@@ -35902,14 +35902,11 @@ function blockSpecToNode(blockSpec, schema) {
       content2.push(schema.text(styledText.text, marks));
     }
   }
-  const contentNode = schema.nodes[blockSpec.type].create(
-    blockSpec.props,
-    content2
-  );
+  const contentNode = schema.nodes[block2.type].create(block2.props, content2);
   const children = [];
-  if (blockSpec.children) {
-    for (const child of blockSpec.children) {
-      children.push(blockSpecToNode(child, schema));
+  if (block2.children) {
+    for (const child of block2.children) {
+      children.push(blockToNode(child, schema));
     }
   }
   const groupNode = schema.nodes["blockGroup"].create({}, children);
@@ -35933,7 +35930,7 @@ function getNodeById(id, doc2) {
     return false;
   });
   if (!targetNode || !posBeforeNode) {
-    throw Error("Could not find block in the editor with matching ID");
+    throw Error("Could not find block in the editor with matching ID.");
   }
   return {
     node: targetNode,
@@ -35945,14 +35942,16 @@ function nodeToBlock(node2) {
   const props = {};
   for (const [attr, value] of Object.entries(blockInfo.contentNode.attrs)) {
     if (!(blockInfo.contentType.name in blockProps)) {
-      throw Error("Block is of an unrecognized type.");
+      throw Error(
+        "Block is of an unrecognized type: " + blockInfo.contentType.name
+      );
     }
     const validAttrs = blockProps[blockInfo.contentType.name];
     if (validAttrs.has(attr)) {
       props[attr] = value;
     }
   }
-  const styledText = [];
+  const content2 = [];
   blockInfo.contentNode.content.forEach((node22) => {
     const styles2 = [];
     for (const mark2 of node22.marks) {
@@ -35961,7 +35960,7 @@ function nodeToBlock(node2) {
         props: mark2.attrs
       });
     }
-    styledText.push({
+    content2.push({
       text: node22.textContent,
       styles: styles2
     });
@@ -35974,8 +35973,7 @@ function nodeToBlock(node2) {
     id: blockInfo.id,
     type: blockInfo.contentType.name,
     props,
-    textContent: blockInfo.contentNode.textContent,
-    styledTextContent: styledText,
+    content: content2,
     children
   };
 }
@@ -35986,19 +35984,18 @@ class Editor2 {
   }
   /**
    * Converts a Block into a ProseMirror node.
-   * @param blockSpec The Block to convert into a ProseMirror node.
+   * @param block The Block to convert into a ProseMirror node.
    */
-  blockSpecToNode(blockSpec) {
-    return blockSpecToNode(blockSpec, this.tiptapEditor.schema);
+  blockToNode(block2) {
+    return blockToNode(block2, this.tiptapEditor.schema);
   }
   /**
    * Gets the ProseMirror `blockContainer` node with the given ID from within a document. Throws an error if no
-   * `blockContainerNode` with the given ID could be found.
+   * `blockContainer` node with the given ID could be found.
    * @param id The ID of the target `blockContainer` node.
-   * @param doc The ProseMirror document to search for the node in.
    */
-  getNodeById(id, doc2) {
-    return getNodeById(id, doc2);
+  getNodeById(id) {
+    return getNodeById(id, this.tiptapEditor.state.doc);
   }
   /**
    * Converts a ProseMirror node into a Block.
@@ -36036,7 +36033,7 @@ class Editor2 {
   }
   /**
    * Inserts multiple blocks before, after, or nested inside an existing block in the editor.
-   * @param blocksToInsert An array of specifications for the blocks to insert.
+   * @param blocksToInsert An array of blocks to insert.
    * @param blockToInsertAt An existing block, marking where the new blocks should be inserted at.
    * @param placement Determines whether the blocks should be inserted just before, just after, or nested inside the
    * existing block.
@@ -36044,13 +36041,10 @@ class Editor2 {
   insertBlocks(blocksToInsert, blockToInsertAt, placement = "before") {
     const nodesToInsert = [];
     for (const blockSpec of blocksToInsert) {
-      nodesToInsert.push(this.blockSpecToNode(blockSpec));
+      nodesToInsert.push(this.blockToNode(blockSpec));
     }
     let insertionPos = -1;
-    const { node: node2, posBeforeNode } = this.getNodeById(
-      blockToInsertAt.id,
-      this.tiptapEditor.state.doc
-    );
+    const { node: node2, posBeforeNode } = this.getNodeById(blockToInsertAt.id);
     if (placement === "before") {
       insertionPos = posBeforeNode;
     }
@@ -36075,14 +36069,11 @@ class Editor2 {
   /**
    * Updates a block in the editor to the given specification.
    * @param blockToUpdate The block that should be updated.
-   * @param blockUpdate The specification that the block should be updated to.
+   * @param updatedBlock The specification that the block should be updated to.
    */
-  updateBlock(blockToUpdate, blockUpdate) {
-    const { posBeforeNode } = this.getNodeById(
-      blockToUpdate.id,
-      this.tiptapEditor.state.doc
-    );
-    this.tiptapEditor.commands.BNUpdateBlock(posBeforeNode + 1, blockUpdate);
+  updateBlock(blockToUpdate, updatedBlock) {
+    const { posBeforeNode } = this.getNodeById(blockToUpdate.id);
+    this.tiptapEditor.commands.BNUpdateBlock(posBeforeNode + 1, updatedBlock);
   }
   /**
    * Removes multiple blocks from the editor. Throws an error if any of the blocks could not be found.
@@ -36118,6 +36109,24 @@ class Editor2 {
     }
   }
   /**
+   * Replaces multiple blocks in the editor with several other blocks. If the provided blocks to remove are not adjacent
+   * to each other, the new blocks are inserted at the position of the first block in the array. Throws an error if any
+   * of the blocks could not be found.
+   * @param blocksToRemove An array of blocks that should be replaced.
+   * @param blocksToInsert An array of blocks to replace the old ones with.
+   */
+  replaceBlocks(blocksToRemove, blocksToInsert) {
+    this.insertBlocks(blocksToInsert, blocksToRemove[0]);
+    this.removeBlocks(blocksToRemove);
+  }
+  /**
+   * Executes a callback function whenever the editor's content changes.
+   * @param callback The callback function to execute.
+   */
+  onContentChange(callback) {
+    this.tiptapEditor.on("update", callback);
+  }
+  /**
    * Serializes a list of blocks into an HTML string. The output is not the same as what's rendered by the editor, and
    * is simplified in order to better conform to HTML standards. Block structuring elements are removed, children of
    * blocks which aren't list items are lifted out of them, and list items blocks are wrapped in `ul`/`ol` tags.
@@ -36127,7 +36136,7 @@ class Editor2 {
     const htmlParentElement = document.createElement("div");
     const serializer = DOMSerializer.fromSchema(this.tiptapEditor.schema);
     for (const block2 of blocks2) {
-      const node2 = this.blockSpecToNode(block2);
+      const node2 = this.blockToNode(block2);
       const htmlNode = serializer.serializeNode(node2);
       htmlParentElement.appendChild(htmlNode);
     }
@@ -38952,17 +38961,17 @@ const BlockContainer = Node2.create({
         return true;
       },
       // Updates a block to the given specification.
-      BNUpdateBlock: (posInBlock, blockSpec) => ({ state, dispatch }) => {
+      BNUpdateBlock: (posInBlock, block2) => ({ state, dispatch }) => {
         const blockInfo = getBlockInfoFromPos(state.doc, posInBlock);
         if (blockInfo === void 0) {
           return false;
         }
         const { startPos, endPos, node: node2, contentNode } = blockInfo;
         if (dispatch) {
-          if (blockSpec.children !== void 0) {
+          if (block2.children !== void 0) {
             const childNodes = [];
-            for (const child of blockSpec.children) {
-              childNodes.push(blockSpecToNode(child, state.schema));
+            for (const child of block2.children) {
+              childNodes.push(blockToNode(child, state.schema));
             }
             if (node2.childCount === 2) {
               state.tr.replace(
@@ -38977,12 +38986,12 @@ const BlockContainer = Node2.create({
               );
             }
           }
-          if (blockSpec.content !== void 0) {
+          if (block2.content !== void 0) {
             let content2 = [];
-            if (typeof blockSpec.content === "string") {
-              content2.push(state.schema.text(blockSpec.content));
+            if (typeof block2.content === "string") {
+              content2.push(state.schema.text(block2.content));
             } else {
-              for (const styledText of blockSpec.content) {
+              for (const styledText of block2.content) {
                 const marks = [];
                 for (const style2 of styledText.styles) {
                   marks.push(state.schema.mark(style2.type, style2.props));
@@ -38996,20 +39005,16 @@ const BlockContainer = Node2.create({
               new Slice(Fragment.from(content2), 0, 0)
             );
           }
-          state.tr.setNodeMarkup(
-            startPos,
-            state.schema.nodes[blockSpec.type],
-            {
-              ...contentNode.attrs,
-              ...blockSpec.props
-            }
-          );
+          state.tr.setNodeMarkup(startPos, state.schema.nodes[block2.type], {
+            ...contentNode.attrs,
+            ...block2.props
+          });
         }
         return true;
       },
       // Updates a block to the given specification if it's empty, otherwise creates a new block from that specification
       // below it.
-      BNCreateOrUpdateBlock: (posInBlock, blockSpec) => ({ state, chain }) => {
+      BNCreateOrUpdateBlock: (posInBlock, block2) => ({ state, chain }) => {
         const blockInfo = getBlockInfoFromPos(state.doc, posInBlock);
         if (blockInfo === void 0) {
           return false;
@@ -39017,11 +39022,11 @@ const BlockContainer = Node2.create({
         const { node: node2, startPos, endPos } = blockInfo;
         if (node2.textContent.length === 0) {
           const oldBlockContentPos = startPos + 1;
-          return chain().BNUpdateBlock(posInBlock, blockSpec).setTextSelection(oldBlockContentPos).run();
+          return chain().BNUpdateBlock(posInBlock, block2).setTextSelection(oldBlockContentPos).run();
         } else {
           const newBlockInsertionPos = endPos + 1;
           const newBlockContentPos = newBlockInsertionPos + 1;
-          return chain().BNCreateBlock(newBlockInsertionPos).BNUpdateBlock(newBlockContentPos, blockSpec).setTextSelection(newBlockContentPos).run();
+          return chain().BNCreateBlock(newBlockInsertionPos).BNUpdateBlock(newBlockContentPos, block2).setTextSelection(newBlockContentPos).run();
         }
       }
     };
@@ -40399,11 +40404,11 @@ class FormattingToolbarView {
         this.editor.view.focus();
         this.editor.commands.liftListItem("blockContainer");
       },
-      updateBlock: (blockSpec) => {
+      updateBlock: (updatedBlock) => {
         this.editor.view.focus();
         this.editor.commands.BNUpdateBlock(
           this.editor.state.selection.from,
-          blockSpec
+          updatedBlock
         );
       }
     };
@@ -41449,7 +41454,7 @@ export {
   Editor2 as Editor,
   SlashMenuItem,
   blockProps,
-  blockSpecToNode,
+  blockToNode,
   defaultSlashCommands,
   getBlockNoteExtensions,
   getNodeById,
