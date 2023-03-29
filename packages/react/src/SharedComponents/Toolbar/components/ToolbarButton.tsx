@@ -5,13 +5,13 @@ import { TooltipContent } from "../../Tooltip/components/TooltipContent";
 import { IconType } from "react-icons";
 
 export type ToolbarButtonProps = {
-  onClick?: (e: MouseEvent) => void;
-  icon?: IconType;
-  mainTooltip: string;
-  secondaryTooltip?: string;
+  name: string;
+  execute: (e: MouseEvent) => void;
+  icon: IconType;
+  shortcut?: string;
   isSelected?: boolean;
-  children?: any;
   isDisabled?: boolean;
+  children?: any;
 };
 
 /**
@@ -24,19 +24,19 @@ export const ToolbarButton = forwardRef(
       <Tippy
         content={
           <TooltipContent
-            mainTooltip={props.mainTooltip}
-            secondaryTooltip={props.secondaryTooltip}
+            mainTooltip={props.name}
+            secondaryTooltip={props.shortcut}
           />
         }
         trigger={"mouseenter"}>
         {/*Creates an ActionIcon instead of a Button if only an icon is provided as content.*/}
         {props.children ? (
           <Button
-            onClick={props.onClick}
+            onClick={props.execute}
             color={"brandFinal"}
             data-test={
-              props.mainTooltip.slice(0, 1).toLowerCase() +
-              props.mainTooltip.replace(/\s+/g, "").slice(1)
+              props.name.slice(0, 1).toLowerCase() +
+              props.name.replace(/\s+/g, "").slice(1)
             }
             size={"xs"}
             variant={props.isSelected ? "filled" : "subtle"}
@@ -47,11 +47,11 @@ export const ToolbarButton = forwardRef(
           </Button>
         ) : (
           <ActionIcon
-            onClick={props.onClick}
+            onClick={props.execute}
             color={"brandFinal"}
             data-test={
-              props.mainTooltip.slice(0, 1).toLowerCase() +
-              props.mainTooltip.replace(/\s+/g, "").slice(1)
+              props.name.slice(0, 1).toLowerCase() +
+              props.name.replace(/\s+/g, "").slice(1)
             }
             size={30}
             variant={props.isSelected ? "filled" : "subtle"}

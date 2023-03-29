@@ -1,18 +1,12 @@
 import { Menu } from "@mantine/core";
-import { MouseEvent } from "react";
-import { IconType } from "react-icons";
-import { ToolbarDropdownItem } from "./ToolbarDropdownItem";
+import {
+  ToolbarDropdownItem,
+  ToolbarDropdownItemProps,
+} from "./ToolbarDropdownItem";
 import { ToolbarDropdownTarget } from "./ToolbarDropdownTarget";
 
 export type ToolbarDropdownProps = {
-  items: Array<{
-    onClick?: (e: MouseEvent) => void;
-    text: string;
-    icon?: IconType;
-    isSelected?: boolean;
-    children?: any;
-    isDisabled?: boolean;
-  }>;
+  items: ToolbarDropdownItemProps[];
   children?: any;
   isDisabled?: boolean;
 };
@@ -27,7 +21,7 @@ export function ToolbarDropdown(props: ToolbarDropdownProps) {
       </Menu.Target>
       <Menu.Dropdown>
         {props.items.map((item) => (
-          <ToolbarDropdownItem key={item.text} {...item} />
+          <ToolbarDropdownItem key={item.name} {...item} />
         ))}
       </Menu.Dropdown>
     </Menu>

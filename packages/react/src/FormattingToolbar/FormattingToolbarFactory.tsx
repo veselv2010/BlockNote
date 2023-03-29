@@ -8,12 +8,14 @@ import { FormattingToolbar as ReactFormattingToolbar } from "./components/Format
 import { ReactElementFactory } from "../ElementFactory/components/ReactElementFactory";
 
 export const ReactFormattingToolbarFactory: FormattingToolbarFactory = (
+  items: JSX.Element,
   staticParams
-): FormattingToolbar =>
-  ReactElementFactory<
+): FormattingToolbar => {
+  return ReactElementFactory<
     FormattingToolbarStaticParams,
     FormattingToolbarDynamicParams
-  >(staticParams, ReactFormattingToolbar, {
+  >(staticParams, items ? items : ReactFormattingToolbar, {
     animation: "fade",
     placement: "top-start",
   });
+};

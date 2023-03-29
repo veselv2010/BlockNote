@@ -29,6 +29,7 @@ import {
   BaseSlashMenuItem,
   defaultSlashMenuItems,
 } from "./extensions/SlashMenu";
+import { DefaultFormattingToolbar } from "../../react/src/FormattingToolbar/components/DefaultFormattingToolbar";
 
 export type BlockNoteEditorOptions = {
   // TODO: Figure out if enableBlockNoteExtensions/disableHistoryExtension are needed and document them.
@@ -36,6 +37,7 @@ export type BlockNoteEditorOptions = {
   disableHistoryExtension: boolean;
   uiFactories: UiFactories;
   slashCommands: BaseSlashMenuItem[];
+  formattingToolbarItems: JSX.Element;
   parentElement: HTMLElement;
   editorDOMAttributes: Record<string, string>;
   onEditorReady: (editor: BlockNoteEditor) => void;
@@ -65,6 +67,10 @@ export class BlockNoteEditor {
       editor: this,
       uiFactories: options.uiFactories || {},
       slashCommands: options.slashCommands || defaultSlashMenuItems,
+      formattingToolbarItems: options.formattingToolbarItems || (
+        <DefaultFormattingToolbar editor={this as any} />
+        // <div />
+      ),
     });
 
     let extensions = options.disableHistoryExtension

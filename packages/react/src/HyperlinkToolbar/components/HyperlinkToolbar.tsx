@@ -32,23 +32,24 @@ export const HyperlinkToolbar = (props: HyperlinkToolbarProps) => {
   return (
     <Toolbar>
       <ToolbarButton
-        mainTooltip="Edit"
+        name="Edit"
         isSelected={false}
-        onClick={() => setIsEditing(true)}>
+        icon={RiExternalLinkFill}
+        execute={() => setIsEditing(true)}>
         Edit Link
       </ToolbarButton>
       <ToolbarButton
-        mainTooltip="Open in new tab"
+        name="Open in new tab"
         isSelected={false}
-        onClick={() => {
+        execute={() => {
           window.open(props.url, "_blank");
         }}
         icon={RiExternalLinkFill}
       />
       <ToolbarButton
-        mainTooltip="Remove link"
+        name="Remove link"
         isSelected={false}
-        onClick={props.deleteHyperlink}
+        execute={props.deleteHyperlink}
         icon={RiLinkUnlink}
       />
     </Toolbar>

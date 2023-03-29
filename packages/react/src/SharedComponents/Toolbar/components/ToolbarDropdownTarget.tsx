@@ -4,8 +4,8 @@ import { IconType } from "react-icons";
 import { forwardRef } from "react";
 
 export type ToolbarDropdownTargetProps = {
-  text: string;
-  icon?: IconType;
+  name: string;
+  icon: IconType;
   isDisabled?: boolean;
 };
 
@@ -13,7 +13,7 @@ export const ToolbarDropdownTarget = forwardRef<
   HTMLButtonElement,
   ToolbarDropdownTargetProps
 >((props: ToolbarDropdownTargetProps, ref) => {
-  const { text, icon, isDisabled, ...others } = props;
+  const { name, icon, isDisabled, ...others } = props;
 
   const TargetIcon = props.icon;
   return (
@@ -25,7 +25,7 @@ export const ToolbarDropdownTarget = forwardRef<
       disabled={props.isDisabled}
       ref={ref}
       {...others}>
-      {props.text}
+      {props.name}
     </Button>
   );
 });

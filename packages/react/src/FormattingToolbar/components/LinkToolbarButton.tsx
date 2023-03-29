@@ -64,8 +64,9 @@ export const LinkToolbarButton = (props: HyperlinkButtonProps) => {
       visible={creationMenuOpen}>
       <ToolbarButton
         isSelected={props.isSelected}
-        mainTooltip={props.mainTooltip}
-        secondaryTooltip={props.secondaryTooltip}
+        name={props.name}
+        execute={props.execute}
+        shortcut={props.shortcut}
         icon={props.icon}
         ref={ref}
       />

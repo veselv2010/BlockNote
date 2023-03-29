@@ -46,6 +46,7 @@ export const getBlockNoteExtensions = (opts: {
   editor: BlockNoteEditor;
   uiFactories: UiFactories;
   slashCommands: BaseSlashMenuItem[];
+  formattingToolbarItems: JSX.Element;
 }) => {
   const ret: Extensions = [
     extensions.ClipboardTextSerializer,
@@ -108,6 +109,7 @@ export const getBlockNoteExtensions = (opts: {
     ret.push(
       FormattingToolbarExtension.configure({
         editor: opts.editor,
+        items: opts.formattingToolbarItems,
         formattingToolbarFactory: opts.uiFactories.formattingToolbarFactory,
       })
     );

@@ -6,9 +6,9 @@ import {
 } from "@tiptap/core";
 import { EditorState, Plugin, PluginKey } from "prosemirror-state";
 import { EditorView } from "prosemirror-view";
-import { BlockNoteEditor } from "../..";
-import { Block, PartialBlock } from "../Blocks/api/blockTypes";
-import { getBlockInfoFromPos } from "../Blocks/helpers/getBlockInfoFromPos";
+import { BlockNoteEditor } from "@blocknote/core";
+// import { Block, PartialBlock } from "../Blocks/api/blockTypes";
+// import { getBlockInfoFromPos } from "../Blocks/helpers/getBlockInfoFromPos";
 import {
   FormattingToolbar,
   FormattingToolbarDynamicParams,
@@ -22,6 +22,7 @@ export interface FormattingToolbarPluginProps {
   pluginKey: PluginKey;
   tiptapEditor: Editor;
   editor: BlockNoteEditor;
+  items: JSX.Element;
   formattingToolbarFactory: FormattingToolbarFactory;
   shouldShow?:
     | ((props: {
@@ -42,6 +43,7 @@ export type FormattingToolbarViewProps = FormattingToolbarPluginProps & {
 export class FormattingToolbarView {
   public editor: BlockNoteEditor;
   private ttEditor: Editor;
+  private items: JSX.Element;
 
   public view: EditorView;
 
@@ -71,11 +73,13 @@ export class FormattingToolbarView {
     editor,
     tiptapEditor,
     formattingToolbarFactory,
+    items,
     view,
     shouldShow,
   }: FormattingToolbarViewProps) {
     this.editor = editor;
     this.ttEditor = tiptapEditor;
+    this.items = items;
     this.view = view;
 
     this.formattingToolbar = formattingToolbarFactory(this.getStaticParams());
@@ -235,110 +239,112 @@ export class FormattingToolbarView {
 
   getStaticParams(): FormattingToolbarStaticParams {
     return {
-      toggleBold: () => {
-        this.ttEditor.view.focus();
-        this.ttEditor.commands.toggleBold();
-      },
-      toggleItalic: () => {
-        this.ttEditor.view.focus();
-        this.ttEditor.commands.toggleItalic();
-      },
-      toggleUnderline: () => {
-        this.ttEditor.view.focus();
-        this.ttEditor.commands.toggleUnderline();
-      },
-      toggleStrike: () => {
-        this.ttEditor.view.focus();
-        this.ttEditor.commands.toggleStrike();
-      },
-      setHyperlink: (url: string, text?: string) => {
-        if (url === "") {
-          return;
-        }
-
-        let { from, to } = this.ttEditor.state.selection;
-
-        if (!text) {
-          text = this.ttEditor.state.doc.textBetween(from, to);
-        }
-
-        const mark = this.ttEditor.schema.mark("link", { href: url });
-
-        this.ttEditor.view.dispatch(
-          this.ttEditor.view.state.tr
-            .insertText(text, from, to)
-            .addMark(from, from + text.length, mark)
-        );
-        this.ttEditor.view.focus();
-      },
-      setTextColor: (color: string) => {
-        this.ttEditor.view.focus();
-        this.ttEditor.commands.setTextColor(color);
-      },
-      setBackgroundColor: (color: string) => {
-        this.ttEditor.view.focus();
-        this.ttEditor.commands.setBackgroundColor(color);
-      },
-      setTextAlignment: (
-        textAlignment: "left" | "center" | "right" | "justify"
-      ) => {
-        this.ttEditor.view.focus();
-        this.ttEditor.commands.setTextAlignment(textAlignment);
-      },
-      increaseBlockIndent: () => {
-        this.ttEditor.view.focus();
-        this.ttEditor.commands.sinkListItem("blockContainer");
-      },
-      decreaseBlockIndent: () => {
-        this.ttEditor.view.focus();
-        this.ttEditor.commands.liftListItem("blockContainer");
-      },
-      // TODO: consider removing this method, and have clients use editor.updateBlock() instead
-      updateBlock: (updatedBlock: PartialBlock) => {
-        this.ttEditor.view.focus();
-        this.ttEditor.commands.BNUpdateBlock(
-          this.ttEditor.state.selection.from,
-          updatedBlock
-        );
-        // this.editor.updateBlock(updatedBlock.id!, updatedBlock);
-      },
+      // toggleBold: () => {
+      //   this.ttEditor.view.focus();
+      //   this.ttEditor.commands.toggleBold();
+      // },
+      // toggleItalic: () => {
+      //   this.ttEditor.view.focus();
+      //   this.ttEditor.commands.toggleItalic();
+      // },
+      // toggleUnderline: () => {
+      //   this.ttEditor.view.focus();
+      //   this.ttEditor.commands.toggleUnderline();
+      // },
+      // toggleStrike: () => {
+      //   this.ttEditor.view.focus();
+      //   this.ttEditor.commands.toggleStrike();
+      // },
+      // setHyperlink: (url: string, text?: string) => {
+      //   if (url === "") {
+      //     return;
+      //   }
+      //
+      //   let { from, to } = this.ttEditor.state.selection;
+      //
+      //   if (!text) {
+      //     text = this.ttEditor.state.doc.textBetween(from, to);
+      //   }
+      //
+      //   const mark = this.ttEditor.schema.mark("link", { href: url });
+      //
+      //   this.ttEditor.view.dispatch(
+      //     this.ttEditor.view.state.tr
+      //       .insertText(text, from, to)
+      //       .addMark(from, from + text.length, mark)
+      //   );
+      //   this.ttEditor.view.focus();
+      // },
+      // setTextColor: (color: string) => {
+      //   this.ttEditor.view.focus();
+      //   this.ttEditor.commands.setTextColor(color);
+      // },
+      // setBackgroundColor: (color: string) => {
+      //   this.ttEditor.view.focus();
+      //   this.ttEditor.commands.setBackgroundColor(color);
+      // },
+      // setTextAlignment: (
+      //   textAlignment: "left" | "center" | "right" | "justify"
+      // ) => {
+      //   this.ttEditor.view.focus();
+      //   this.ttEditor.commands.setTextAlignment(textAlignment);
+      // },
+      // increaseBlockIndent: () => {
+      //   this.ttEditor.view.focus();
+      //   this.ttEditor.commands.sinkListItem("blockContainer");
+      // },
+      // decreaseBlockIndent: () => {
+      //   this.ttEditor.view.focus();
+      //   this.ttEditor.commands.liftListItem("blockContainer");
+      // },
+      // // TODO: consider removing this method, and have clients use editor.updateBlock() instead
+      // updateBlock: (updatedBlock: PartialBlock) => {
+      //   this.ttEditor.view.focus();
+      //   this.ttEditor.commands.BNUpdateBlock(
+      //     this.ttEditor.state.selection.from,
+      //     updatedBlock
+      //   );
+      //   // this.editor.updateBlock(updatedBlock.id!, updatedBlock);
+      // },
+      items: this.items,
     };
   }
 
   getDynamicParams(): FormattingToolbarDynamicParams {
-    const blockInfo = getBlockInfoFromPos(
-      this.ttEditor.state.doc,
-      this.ttEditor.state.selection.from
-    )!;
+    // const blockInfo = getBlockInfoFromPos(
+    //   this.ttEditor.state.doc,
+    //   this.ttEditor.state.selection.from
+    // )!;
 
     return {
-      boldIsActive: this.ttEditor.isActive("bold"),
-      italicIsActive: this.ttEditor.isActive("italic"),
-      underlineIsActive: this.ttEditor.isActive("underline"),
-      strikeIsActive: this.ttEditor.isActive("strike"),
-      hyperlinkIsActive: this.ttEditor.isActive("link"),
-      activeHyperlinkUrl: this.ttEditor.getAttributes("link").href || "",
-      activeHyperlinkText: this.ttEditor.state.doc.textBetween(
-        this.ttEditor.state.selection.from,
-        this.ttEditor.state.selection.to
-      ),
-      textColor: this.ttEditor.getAttributes("textColor").color || "default",
-      backgroundColor:
-        this.ttEditor.getAttributes("backgroundColor").color || "default",
-      textAlignment:
-        this.ttEditor.getAttributes(blockInfo.contentType).textAlignment ||
-        "left",
-      canIncreaseBlockIndent:
-        this.ttEditor.state.doc
-          .resolve(blockInfo.startPos)
-          .index(blockInfo.depth - 1) > 0,
-      canDecreaseBlockIndent: blockInfo.depth > 2,
-      // Needs type cast as there is no way to create a type that dynamically updates based on which extensions are
-      // loaded by the editor.
-      block: {
-        type: blockInfo.contentType.name,
-        props: blockInfo.contentNode.attrs,
-      } as Block,
+      // boldIsActive: this.ttEditor.isActive("bold"),
+      // italicIsActive: this.ttEditor.isActive("italic"),
+      // underlineIsActive: this.ttEditor.isActive("underline"),
+      // strikeIsActive: this.ttEditor.isActive("strike"),
+      // hyperlinkIsActive: this.ttEditor.isActive("link"),
+      // activeHyperlinkUrl: this.ttEditor.getAttributes("link").href || "",
+      // activeHyperlinkText: this.ttEditor.state.doc.textBetween(
+      //   this.ttEditor.state.selection.from,
+      //   this.ttEditor.state.selection.to
+      // ),
+      // textColor: this.ttEditor.getAttributes("textColor").color || "default",
+      // backgroundColor:
+      //   this.ttEditor.getAttributes("backgroundColor").color || "default",
+      // textAlignment:
+      //   this.ttEditor.getAttributes(blockInfo.contentType).textAlignment ||
+      //   "left",
+      // canIncreaseBlockIndent:
+      //   this.ttEditor.state.doc
+      //     .resolve(blockInfo.startPos)
+      //     .index(blockInfo.depth - 1) > 0,
+      // canDecreaseBlockIndent: blockInfo.depth > 2,
+      // // Needs type cast as there is no way to create a type that dynamically updates based on which extensions are
+      // // loaded by the editor.
+      // block: {
+      //   type: blockInfo.contentType.name,
+      //   props: blockInfo.contentNode.attrs,
+      // } as Block,
+      editor: this.editor,
       referenceRect: this.getSelectionBoundingBox(),
     };
   }

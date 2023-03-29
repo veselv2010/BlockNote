@@ -8,3 +8,4 @@ export * from "./HyperlinkToolbar/HyperlinkToolbarFactory";
 export * from "./SlashMenu/SlashMenuFactory";
 export * from "./SlashMenu/ReactSlashMenuItem";
 export * from "./SlashMenu/defaultReactSlashMenuItems";
+export * from "./FormattingToolbar/components/DefaultFormattingToolbar";

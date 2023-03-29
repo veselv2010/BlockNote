@@ -1,6 +1,10 @@
 // import logo from './logo.svg'
 import "@blocknote/core/style.css";
-import { BlockNoteView, useBlockNote } from "@blocknote/react";
+import {
+  BlockNoteView,
+  ReactFormattingToolbarFactory,
+  useBlockNote,
+} from "@blocknote/react";
 import styles from "./App.module.css";
 
 type WindowWithProseMirror = Window & typeof globalThis & { ProseMirror: any };
@@ -13,6 +17,11 @@ function App() {
     editorDOMAttributes: {
       class: styles.editor,
       "data-test": "editor",
+    },
+    uiFactories: {
+      formattingToolbarFactory: createReactFormattingToolbarFactory(
+        (props: { props }) => <Toolbar>...</Toolbar>
+      ),
     },
   });
 

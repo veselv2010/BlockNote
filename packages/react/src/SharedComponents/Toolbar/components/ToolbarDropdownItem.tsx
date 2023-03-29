@@ -4,12 +4,12 @@ import { TiTick } from "react-icons/ti";
 import { MouseEvent } from "react";
 
 export type ToolbarDropdownItemProps = {
-  onClick?: (e: MouseEvent) => void;
-  text: string;
-  icon?: IconType;
+  name: string;
+  execute: (e: MouseEvent) => void;
+  icon: IconType;
   isSelected?: boolean;
-  children?: any;
   isDisabled?: boolean;
+  children?: any;
 };
 
 export function ToolbarDropdownItem(props: ToolbarDropdownItemProps) {
@@ -17,8 +17,8 @@ export function ToolbarDropdownItem(props: ToolbarDropdownItemProps) {
 
   return (
     <Menu.Item
-      key={props.text}
-      onClick={props.onClick}
+      key={props.name}
+      onClick={props.execute}
       icon={ItemIcon && <ItemIcon size={16} />}
       rightSection={
         props.isSelected ? (
@@ -29,7 +29,7 @@ export function ToolbarDropdownItem(props: ToolbarDropdownItemProps) {
         )
       }
       disabled={props.isDisabled}>
-      {props.text}
+      {props.name}
     </Menu.Item>
   );
 }

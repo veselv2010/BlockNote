@@ -10,6 +10,7 @@ import { createFormattingToolbarPlugin } from "./FormattingToolbarPlugin";
 export const FormattingToolbarExtension = Extension.create<{
   formattingToolbarFactory: FormattingToolbarFactory;
   editor: BlockNoteEditor;
+  items: JSX.Element;
 }>({
   name: "FormattingToolbarExtension",
 
@@ -24,6 +25,7 @@ export const FormattingToolbarExtension = Extension.create<{
       createFormattingToolbarPlugin({
         tiptapEditor: this.editor,
         editor: this.options.editor,
+        items: this.options.items,
         formattingToolbarFactory: this.options.formattingToolbarFactory,
         pluginKey: new PluginKey("FormattingToolbarPlugin"),
       }),

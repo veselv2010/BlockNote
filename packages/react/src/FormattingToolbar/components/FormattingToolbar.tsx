@@ -57,132 +57,134 @@ export type FormattingToolbarProps = {
   block: Block;
   updateBlock: (updatedBlock: PartialBlock) => void;
 };
-
-// TODO: add list options, indentation
-export const FormattingToolbar = (props: FormattingToolbarProps) => {
+type test = React.FC<FormattingToolbarProps>;
+export const FormattingToolbar: test = (props: FormattingToolbarProps) => {
   return (
     <Toolbar>
       <ToolbarDropdown
         items={[
           {
-            onClick: () =>
+            execute: () =>
               props.updateBlock({
                 type: "paragraph",
                 props: {},
               }),
-            text: "Paragraph",
+            name: "Paragraph",
             icon: RiText,
             isSelected: props.block.type === "paragraph",
           },
           {
-            onClick: () =>
+            execute: () =>
               props.updateBlock({
                 type: "heading",
                 props: { level: "1" },
               }),
-            text: "Heading 1",
+            name: "Heading 1",
             icon: RiH1,
             isSelected:
               props.block.type === "heading" && props.block.props.level === "1",
           },
           {
-            onClick: () =>
+            execute: () =>
               props.updateBlock({
                 type: "heading",
                 props: { level: "2" },
               }),
-            text: "Heading 2",
+            name: "Heading 2",
             icon: RiH2,
             isSelected:
               props.block.type === "heading" && props.block.props.level === "2",
           },
           {
-            onClick: () =>
+            execute: () =>
               props.updateBlock({
                 type: "heading",
                 props: { level: "3" },
               }),
-            text: "Heading 3",
+            name: "Heading 3",
             icon: RiH3,
             isSelected:
               props.block.type === "heading" && props.block.props.level === "3",
           },
           {
-            onClick: () =>
+            execute: () =>
               props.updateBlock({
                 type: "bulletListItem",
                 props: {},
               }),
-            text: "Bullet List",
+            name: "Bullet List",
             icon: RiListUnordered,
             isSelected: props.block.type === "bulletListItem",
           },
           {
-            onClick: () =>
+            execute: () =>
               props.updateBlock({
                 type: "numberedListItem",
                 props: {},
               }),
-            text: "Numbered List",
+            name: "Numbered List",
             icon: RiListOrdered,
             isSelected: props.block.type === "numberedListItem",
           },
         ]}
       />
       <ToolbarButton
-        onClick={props.toggleBold}
+        execute={props.toggleBold}
         isSelected={props.boldIsActive}
-        mainTooltip="Bold"
-        secondaryTooltip={formatKeyboardShortcut("Mod+B")}
+        name="Bold"
+        shortcut={formatKeyboardShortcut("Mod+B")}
         icon={RiBold}
       />
       <ToolbarButton
-        onClick={props.toggleItalic}
+        execute={props.toggleItalic}
         isSelected={props.italicIsActive}
-        mainTooltip="Italic"
-        secondaryTooltip={formatKeyboardShortcut("Mod+I")}
+        name="Italic"
+        shortcut={formatKeyboardShortcut("Mod+I")}
         icon={RiItalic}
       />
       <ToolbarButton
-        onClick={props.toggleUnderline}
+        execute={props.toggleUnderline}
         isSelected={props.underlineIsActive}
-        mainTooltip="Underline"
-        secondaryTooltip={formatKeyboardShortcut("Mod+U")}
+        name="Underline"
+        shortcut={formatKeyboardShortcut("Mod+U")}
         icon={RiUnderline}
       />
       <ToolbarButton
-        onClick={props.toggleStrike}
+        execute={props.toggleStrike}
         isSelected={props.strikeIsActive}
-        mainTooltip="Strikethrough"
-        secondaryTooltip={formatKeyboardShortcut("Mod+Shift+X")}
+        name="Strikethrough"
+        shortcut={formatKeyboardShortcut("Mod+Shift+X")}
         icon={RiStrikethrough}
       />
 
       <ToolbarButton
-        onClick={() => props.setTextAlignment("left")}
+        execute={() => props.setTextAlignment("left")}
         isSelected={props.textAlignment === "left"}
-        mainTooltip={"Align Text Left"}
+        name={"Align Text Left"}
         icon={RiAlignLeft}
       />
 
       <ToolbarButton
-        onClick={() => props.setTextAlignment("center")}
+        execute={() => props.setTextAlignment("center")}
         isSelected={props.textAlignment === "center"}
-        mainTooltip={"Align Text Center"}
+        name={"Align Text Center"}
         icon={RiAlignCenter}
       />
 
       <ToolbarButton
-        onClick={() => props.setTextAlignment("right")}
+        execute={() => props.setTextAlignment("right")}
         isSelected={props.textAlignment === "right"}
-        mainTooltip={"Align Text Right"}
+        name={"Align Text Right"}
         icon={RiAlignRight}
       />
 
       <Menu>
         <Menu.Target>
           <ToolbarButton
-            mainTooltip={"Colors"}
+            name={"Colors"}
+            execute={() => {
+              return;
+            }}
             icon={() => (
               <ColorIcon
                 textColor={props.textColor}
@@ -203,25 +205,28 @@ export const FormattingToolbar = (props: FormattingToolbarProps) => {
       </Menu>
 
       <ToolbarButton
-        onClick={props.increaseBlockIndent}
+        execute={props.increaseBlockIndent}
         isDisabled={!props.canIncreaseBlockIndent}
-        mainTooltip="Indent"
-        secondaryTooltip={formatKeyboardShortcut("Tab")}
+        name="Indent"
+        shortcut={formatKeyboardShortcut("Tab")}
         icon={RiIndentIncrease}
       />
 
       <ToolbarButton
-        onClick={props.decreaseBlockIndent}
+        execute={props.decreaseBlockIndent}
         isDisabled={!props.canDecreaseBlockIndent}
-        mainTooltip="Decrease Indent"
-        secondaryTooltip={formatKeyboardShortcut("Shift+Tab")}
+        name="Decrease Indent"
+        shortcut={formatKeyboardShortcut("Shift+Tab")}
         icon={RiIndentDecrease}
       />
 
       <LinkToolbarButton
         isSelected={props.hyperlinkIsActive}
-        mainTooltip="Link"
-        secondaryTooltip={formatKeyboardShortcut("Mod+K")}
+        name="Link"
+        execute={() => {
+          return;
+        }}
+        shortcut={formatKeyboardShortcut("Mod+K")}
         icon={RiLink}
         hyperlinkIsActive={props.hyperlinkIsActive}
         activeHyperlinkUrl={props.activeHyperlinkUrl}
