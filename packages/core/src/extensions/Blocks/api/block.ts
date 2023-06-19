@@ -210,6 +210,7 @@ export function createBlockSpec<
   });
 
   return {
+    config: blockConfig,
     node: node,
     propSchema: blockConfig.propSchema,
   };

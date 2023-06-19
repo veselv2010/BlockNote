@@ -37,8 +37,10 @@ export const TextAlignButton = <BSchema extends BlockSchema>(props: {
         }
       }
     } else {
-      const block = props.editor.getTextCursorPosition().block;
-
+      const block = props.editor.getTextCursorPosition()?.block;
+      if (!block) {
+        return;
+      }
       if (!("textAlignment" in block.props)) {
         return false;
       }
@@ -60,8 +62,10 @@ export const TextAlignButton = <BSchema extends BlockSchema>(props: {
           } as PartialBlock<BSchema>);
         }
       } else {
-        const block = props.editor.getTextCursorPosition().block;
-
+        const block = props.editor.getTextCursorPosition()?.block;
+        if (!block) {
+          return;
+        }
         props.editor.updateBlock(block, {
           props: { textAlignment: textAlignment },
         } as PartialBlock<BSchema>);
@@ -78,7 +82,7 @@ export const TextAlignButton = <BSchema extends BlockSchema>(props: {
     <ToolbarButton
       onClick={() => setTextAlignment(props.textAlignment)}
       isSelected={
-        props.editor.getTextCursorPosition().block.props.textAlignment ===
+        props.editor.getTextCursorPosition()?.block.props.textAlignment ===
         props.textAlignment
       }
       mainTooltip={

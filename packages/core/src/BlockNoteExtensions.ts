@@ -21,7 +21,6 @@ import { BackgroundColorExtension } from "./extensions/BackgroundColor/Backgroun
 import { BackgroundColorMark } from "./extensions/BackgroundColor/BackgroundColorMark";
 import { blocks } from "./extensions/Blocks";
 import { BlockSchema } from "./extensions/Blocks/api/blockTypes";
-import { CustomBlockSerializerExtension } from "./extensions/Blocks/api/serialization";
 import blockStyles from "./extensions/Blocks/nodes/Block.module.css";
 import { BlockSideMenuFactory } from "./extensions/DraggableBlocks/BlockSideMenuFactoryTypes";
 import { createDraggableBlocksExtension } from "./extensions/DraggableBlocks/DraggableBlocksExtension";
@@ -67,7 +66,7 @@ export const getBlockNoteExtensions = <BSchema extends BlockSchema>(opts: {
   };
 }) => {
   const ret: Extensions = [
-    extensions.ClipboardTextSerializer,
+    // extensions.ClipboardTextSerializer,
     extensions.Commands,
     extensions.Editable,
     extensions.FocusEvents,
@@ -110,7 +109,7 @@ export const getBlockNoteExtensions = <BSchema extends BlockSchema>(opts: {
     ...Object.values(opts.blockSchema).map((blockSpec) =>
       blockSpec.node.configure({ editor: opts.editor })
     ),
-    CustomBlockSerializerExtension,
+    // CustomBlockSerializerExtension.configure({ editor: opts.editor }),
 
     Dropcursor.configure({ width: 5, color: "#ddeeff" }),
     // This needs to be at the bottom of this list, because Key events (such as enter, when selecting a /command),

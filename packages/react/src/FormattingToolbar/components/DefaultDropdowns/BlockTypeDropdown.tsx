@@ -36,12 +36,12 @@ export const BlockTypeDropdown = <BSchema extends BlockSchema>(props: {
   editor: BlockNoteEditor<BSchema>;
 }) => {
   const [block, setBlock] = useState(
-    props.editor.getTextCursorPosition().block
+    () => props.editor.getTextCursorPosition()?.block
   );
 
   useEffect(
-    () => setBlock(props.editor.getTextCursorPosition().block),
-    [props]
+    () => setBlock(props.editor.getTextCursorPosition()?.block),
+    [props.editor]
   );
 
   if (!shouldShow(props.editor.schema)) {
@@ -56,14 +56,14 @@ export const BlockTypeDropdown = <BSchema extends BlockSchema>(props: {
     (level) => ({
       onClick: () => {
         editor.focus();
-        editor.updateBlock(block, {
+        editor.updateBlock(block!, {
           type: "heading",
           props: { level: level },
         });
       },
       text: "Heading " + level,
       icon: headingIcons[level],
-      isSelected: block.type === "heading" && block.props.level === level,
+      isSelected: block?.type === "heading" && block.props.level === level,
     })
   );
 
@@ -73,39 +73,39 @@ export const BlockTypeDropdown = <BSchema extends BlockSchema>(props: {
         {
           onClick: () => {
             props.editor.focus();
-            props.editor.updateBlock(block, {
+            props.editor.updateBlock(block!, {
               type: "paragraph",
               props: {},
             });
           },
           text: "Paragraph",
           icon: RiText,
-          isSelected: block.type === "paragraph",
+          isSelected: block!.type === "paragraph",
         },
         ...headingItems,
         {
           onClick: () => {
             props.editor.focus();
-            props.editor.updateBlock(block, {
+            props.editor.updateBlock(block!, {
               type: "bulletListItem",
               props: {},
             });
           },
           text: "Bullet List",
           icon: RiListUnordered,
-          isSelected: block.type === "bulletListItem",
+          isSelected: block?.type === "bulletListItem",
         },
         {
           onClick: () => {
             props.editor.focus();
-            props.editor.updateBlock(block, {
+            props.editor.updateBlock(block!, {
               type: "numberedListItem",
               props: {},
             });
           },
           text: "Numbered List",
           icon: RiListOrdered,
-          isSelected: block.type === "numberedListItem",
+          isSelected: block?.type === "numberedListItem",
         },
       ]}
     />

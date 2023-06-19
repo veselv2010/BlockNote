@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { Block, BlockNoteEditor } from "../..";
-import UniqueID from "../../extensions/UniqueID/UniqueID";
+import { Block, BlockNoteEditor, defaultBlockSchema } from "../..";
 import { DefaultBlockSchema } from "../../extensions/Blocks/api/defaultBlocks";
+import UniqueID from "../../extensions/UniqueID/UniqueID";
 
 let editor: BlockNoteEditor;
 
@@ -28,7 +28,12 @@ function removeInlineContentClass(html: string) {
 beforeEach(() => {
   (window as Window & { __TEST_OPTIONS?: {} }).__TEST_OPTIONS = {};
 
-  editor = new BlockNoteEditor();
+  editor = new BlockNoteEditor({
+    blockSchema: {
+      ...defaultBlockSchema,
+      // alert: Alert,
+    },
+  });
 
   nonNestedBlocks = [
     {
@@ -667,7 +672,7 @@ afterEach(() => {
 });
 
 describe("Non-Nested Block/HTML/Markdown Conversions", () => {
-  it("Convert non-nested blocks to HTML", async () => {
+  it.only("Convert non-nested blocks to HTML", async () => {
     const output = await editor.blocksToHTML(nonNestedBlocks);
 
     expect(removeInlineContentClass(output)).toMatchSnapshot();

@@ -334,11 +334,16 @@ export class BlockNoteEditor<BSchema extends BlockSchema = DefaultBlockSchema> {
    * Gets a snapshot of the current text cursor position.
    * @returns A snapshot of the current text cursor position.
    */
-  public getTextCursorPosition(): TextCursorPosition<BSchema> {
-    const { node, depth, startPos, endPos } = getBlockInfoFromPos(
+  public getTextCursorPosition(): TextCursorPosition<BSchema> | undefined {
+    const blockInfo = getBlockInfoFromPos(
       this._tiptapEditor.state.doc,
       this._tiptapEditor.state.selection.from
-    )!;
+    );
+    if (!blockInfo) {
+      return undefined;
+    }
+
+    const { node, depth, startPos, endPos } = blockInfo;
 
     // Index of the current blockContainer node relative to its parent blockGroup.
     const nodeIndex = this._tiptapEditor.state.doc
@@ -684,7 +689,7 @@ export class BlockNoteEditor<BSchema extends BlockSchema = DefaultBlockSchema> {
    * @returns The blocks, serialized as an HTML string.
    */
   public async blocksToHTML(blocks: Block<BSchema>[]): Promise<string> {
-    return blocksToHTML(blocks, this._tiptapEditor.schema);
+    return blocksToHTML(blocks, this);
   }
 
   /**

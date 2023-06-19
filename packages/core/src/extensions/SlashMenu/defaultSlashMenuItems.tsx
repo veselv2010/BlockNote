@@ -7,7 +7,7 @@ function insertOrUpdateBlock<BSchema extends DefaultBlockSchema>(
   editor: BlockNoteEditor<BSchema>,
   block: PartialBlock<BSchema>
 ) {
-  const currentBlock = editor.getTextCursorPosition().block;
+  const currentBlock = editor.getTextCursorPosition()!.block;
 
   if (
     (currentBlock.content.length === 1 &&
@@ -18,7 +18,7 @@ function insertOrUpdateBlock<BSchema extends DefaultBlockSchema>(
     editor.updateBlock(currentBlock, block);
   } else {
     editor.insertBlocks([block], currentBlock, "after");
-    editor.setTextCursorPosition(editor.getTextCursorPosition().nextBlock!);
+    editor.setTextCursorPosition(editor.getTextCursorPosition()!.nextBlock!);
   }
 }
 

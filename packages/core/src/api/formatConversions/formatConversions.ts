@@ -1,4 +1,4 @@
-import { DOMParser, DOMSerializer, Schema } from "prosemirror-model";
+import { DOMParser, Schema } from "prosemirror-model";
 import rehypeParse from "rehype-parse";
 import rehypeRemark from "rehype-remark";
 import rehypeStringify from "rehype-stringify";
@@ -7,7 +7,9 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import remarkStringify from "remark-stringify";
 import { unified } from "unified";
+import { BlockNoteEditor } from "../..";
 import { Block, BlockSchema } from "../../extensions/Blocks/api/blockTypes";
+import { customBlockSerializer } from "../../extensions/Blocks/api/serialization";
 
 import { blockToNode, nodeToBlock } from "../nodeConversions/nodeConversions";
 import { removeUnderlines } from "./removeUnderlinesRehypePlugin";
@@ -15,13 +17,14 @@ import { simplifyBlocks } from "./simplifyBlocksRehypePlugin";
 
 export async function blocksToHTML<BSchema extends BlockSchema>(
   blocks: Block<BSchema>[],
-  schema: Schema
+  editor: BlockNoteEditor<BSchema>
 ): Promise<string> {
   const htmlParentElement = document.createElement("div");
-  const serializer = DOMSerializer.fromSchema(schema);
+  const serializer = customBlockSerializer(editor);
 
   for (const block of blocks) {
-    const node = blockToNode(block, schema);
+    // TODO: we could also directly call the required function on "block" here?
+    const node = blockToNode(block, editor._tiptapEditor.schema);
     const htmlNode = serializer.serializeNode(node);
     htmlParentElement.appendChild(htmlNode);
   }
