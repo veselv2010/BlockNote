@@ -9,24 +9,21 @@ function doc(options: { document?: Document }) {
   return options.document || window.document;
 }
 
-export const customBlockSerializer = <BSchema extends BlockSchema>(
-  schema: Schema,
-  editor: BlockNoteEditor<BSchema>
-) => {
-  const customSerializer = DOMSerializer.fromSchema(schema) as DOMSerializer & {
-    serializeNodeInner: (
-      node: Node,
-      options: { document?: Document }
-    ) => HTMLElement;
-  };
+class CustomDOMSerializer<BSchema extends BlockSchema> extends DOMSerializer {
+  private readonly editor: BlockNoteEditor<BSchema>;
 
-  customSerializer.serializeNodeInner = (
-    node: Node,
-    options: { document?: Document }
-  ) => {
+  constructor(schema: Schema, editor: BlockNoteEditor<BSchema>) {
+    const schemaDOMSerializer = DOMSerializer.fromSchema(schema);
+    super(schemaDOMSerializer.nodes, schemaDOMSerializer.marks);
+
+    this.editor = editor;
+  }
+
+  /// @internal
+  serializeNodeInner(node: Node, options: { document?: Document }) {
     const { dom, contentDOM } = DOMSerializer.renderSpec(
       doc(options),
-      customSerializer.nodes[node.type.name](node)
+      this.nodes[node.type.name](node)
     );
 
     if (contentDOM) {
@@ -45,13 +42,14 @@ export const customBlockSerializer = <BSchema extends BlockSchema>(
         // function.
         const blockContent = DOMSerializer.renderSpec(
           doc(options),
-          editor.schema[node.firstChild!.type.name as keyof BSchema].serialize!(
+          this.editor.schema[node.firstChild!.type.name as keyof BSchema]
+            .serialize!(
             nodeToBlock(
               node,
-              editor.schema,
-              editor.blockCache
+              this.editor.schema,
+              this.editor.blockCache
             ) as SpecificBlock<BlockSchema, string>,
-            editor as BlockNoteEditor<BlockSchema>
+            this.editor as BlockNoteEditor<BlockSchema>
           )
         );
 
@@ -64,10 +62,7 @@ export const customBlockSerializer = <BSchema extends BlockSchema>(
           }
 
           blockContent.contentDOM.appendChild(
-            customSerializer.serializeFragment(
-              node.firstChild!.content,
-              options
-            )
+            this.serializeFragment(node.firstChild!.content, options)
           );
         }
 
@@ -75,7 +70,7 @@ export const customBlockSerializer = <BSchema extends BlockSchema>(
 
         // Renders nested blocks.
         if (node.childCount === 2) {
-          customSerializer.serializeFragment(
+          this.serializeFragment(
             Fragment.from(node.content.lastChild),
             options,
             contentDOM
@@ -83,15 +78,97 @@ export const customBlockSerializer = <BSchema extends BlockSchema>(
         }
       } else {
         // Renders the block normally, i.e. using `toDOM`.
-        customSerializer.serializeFragment(node.content, options, contentDOM);
+        this.serializeFragment(node.content, options, contentDOM);
       }
     }
 
     return dom as HTMLElement;
-  };
+  }
+}
 
-  return customSerializer;
-};
+// export const customBlockSerializer = <BSchema extends BlockSchema>(
+//   schema: Schema,
+//   editor: BlockNoteEditor<BSchema>
+// ) => {
+//   const customSerializer = DOMSerializer.fromSchema(schema) as DOMSerializer & {
+//     serializeNodeInner: (
+//       node: Node,
+//       options: { document?: Document }
+//     ) => HTMLElement;
+//   };
+//
+//   customSerializer.serializeNodeInner = (
+//     node: Node,
+//     options: { document?: Document }
+//   ) => {
+//     const { dom, contentDOM } = DOMSerializer.renderSpec(
+//       doc(options),
+//       customSerializer.nodes[node.type.name](node)
+//     );
+//
+//     if (contentDOM) {
+//       if (node.isLeaf) {
+//         throw new RangeError("Content hole not allowed in a leaf node spec");
+//       }
+//
+//       // Checks if the block type is custom. Custom blocks don't implement a
+//       // `renderHTML` function in their TipTap node type, so `toDOM` also isn't
+//       // implemented in their ProseMirror node type.
+//       if (
+//         node.type.name === "blockContainer" &&
+//         node.firstChild!.type.spec.toDOM === undefined
+//       ) {
+//         // Renders block content using the custom `blockSpec`'s `serialize`
+//         // function.
+//         const blockContent = DOMSerializer.renderSpec(
+//           doc(options),
+//           editor.schema[node.firstChild!.type.name as keyof BSchema].serialize!(
+//             nodeToBlock(
+//               node,
+//               editor.schema,
+//               editor.blockCache
+//             ) as SpecificBlock<BlockSchema, string>,
+//             editor as BlockNoteEditor<BlockSchema>
+//           )
+//         );
+//
+//         // Renders inline content.
+//         if (blockContent.contentDOM) {
+//           if (node.isLeaf) {
+//             throw new RangeError(
+//               "Content hole not allowed in a leaf node spec"
+//             );
+//           }
+//
+//           blockContent.contentDOM.appendChild(
+//             customSerializer.serializeFragment(
+//               node.firstChild!.content,
+//               options
+//             )
+//           );
+//         }
+//
+//         contentDOM.appendChild(blockContent.dom);
+//
+//         // Renders nested blocks.
+//         if (node.childCount === 2) {
+//           customSerializer.serializeFragment(
+//             Fragment.from(node.content.lastChild),
+//             options,
+//             contentDOM
+//           );
+//         }
+//       } else {
+//         // Renders the block normally, i.e. using `toDOM`.
+//         customSerializer.serializeFragment(node.content, options, contentDOM);
+//       }
+//     }
+//
+//     return dom as HTMLElement;
+//   };
+//
+//   return customSerializer;
+// };
 
 export const createCustomBlockSerializerExtension = <
   BSchema extends BlockSchema
@@ -103,7 +180,7 @@ export const createCustomBlockSerializerExtension = <
       return [
         new Plugin({
           props: {
-            clipboardSerializer: customBlockSerializer(
+            clipboardSerializer: new CustomDOMSerializer(
               this.editor.schema,
               editor
             ),
