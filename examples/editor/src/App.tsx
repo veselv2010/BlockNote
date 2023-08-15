@@ -1,6 +1,6 @@
 // import logo from './logo.svg'
 import "@blocknote/core/style.css";
-import { BlockNoteView, FormattingToolbarPositioner, HyperlinkToolbarPositioner, SideMenuPositioner, SlashMenuPositioner, useBlockNote } from "@blocknote/react";
+import { BlockNoteView, FormattingToolbarPositioner, HyperlinkToolbarPositioner, SideMenuPositioner, SlashMenuPositioner, useBlockNote, Theme, } from "@blocknote/react";
 import styles from "./App.module.css";
 import { customSlashMenuItemList } from "./slash_menu";
 import { blockSchema } from "./schema";
@@ -14,11 +14,12 @@ function App() {
         console.log(e);
       });
     },
-    editorDOMAttributes: {
-      class: styles.editor,
-      "data-test": "editor",
+    domAttributes: {
+      editor: {
+        class: styles.editor,
+        "data-test": "editor",
+      },
     },
-    theme: "light",
     blockSchema: blockSchema,
     slashMenuItems: customSlashMenuItemList,
   });
