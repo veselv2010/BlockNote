@@ -4,7 +4,7 @@
   "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[typescriptreact]": {
-    "editor.defaultFormatter": "vesbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "search.exclude": {
     "packages/editor/public/types": true

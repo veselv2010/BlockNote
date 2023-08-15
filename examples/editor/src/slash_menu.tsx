@@ -212,20 +212,7 @@ const extraFields: Record<
 const insertImageItem: ReactSlashMenuItem<typeof blockSchema> = {
     name: "Вставка изображения",
     execute: (editor) => {
-        const src: string | null = prompt("Enter image URL");
-
-        editor.insertBlocks(
-            [
-                {
-                    type: "image",
-                    props: {
-                        src: src || "https://via.placeholder.com/1000",
-                    },
-                },
-            ],
-            editor.getTextCursorPosition().block,
-            "after"
-        );
+        window.dispatchEvent(createCreationEvent('image'))
     },
     aliases: ["image", "img", "picture", "media"],
     group: "Медиа",
@@ -233,24 +220,14 @@ const insertImageItem: ReactSlashMenuItem<typeof blockSchema> = {
     hint: "",
 };
 
-const insertVideoItem: ReactSlashMenuItem<typeof blockSchema> = {
+function createCreationEvent(type:String) : CustomEvent {
+    return new CustomEvent('post-editor', {detail: {'type': type, 'action': 'create'}})
+}
+
+const insertVideoItemCommand: ReactSlashMenuItem<typeof blockSchema> = {
     name: "Вставка видео",
     execute: (editor) => {
-        const src: string | null = prompt("Enter image URL");
-        window.postMessage('', 'post-editor-video'),
-        (window as WindowWithProseMirror)
-        editor.insertBlocks(
-            [
-                {
-                    type: "video",
-                    props: {
-                        src: src || "https://via.placeholder.com/1000",
-                    },
-                },
-            ],
-            editor.getTextCursorPosition().block,
-            "after"
-        );
+        window.dispatchEvent(createCreationEvent('video'))
     },
     aliases: ['video', 'видео'],
     group: "Медиа",
@@ -265,5 +242,5 @@ export const customSlashMenuItemList = [
     })),
     insertHelloWorldItem,
     insertImageItem,
-    insertVideoItem,
+    insertVideoItemCommand,
 ];
