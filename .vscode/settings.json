@@ -4,10 +4,15 @@
   "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "vesbenp.prettier-vscode"
   },
   "search.exclude": {
     "packages/editor/public/types": true
   },
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#E89BCE",
+    "titleBar.activeBackground": "#EFBBDD",
+    "titleBar.activeForeground": "#300B24"
+  }
 }
