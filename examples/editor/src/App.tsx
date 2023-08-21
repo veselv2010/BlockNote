@@ -12,8 +12,21 @@ import {
 import styles from "./App.module.css";
 import { customSlashMenuItemList } from "./slash_menu";
 import { blockSchema } from "./schema";
-import { insertImage, insertVideo } from "./custom_actions/insert_actions";
-
+import {
+  EditorEvent,
+  PostComponentType,
+  PostEditorAction,
+} from "./custom_actions/editor_event";
+import { insertVideo } from "./custom_actions/insert_actions";
+import { ImageBlock } from "./custom_blocks/image_block";
+import {
+  BlockIdentifier,
+  BlockSchema,
+  BlockSpec,
+  PropSchema,
+} from "@blocknote/core";
+import { VideoBlock } from "./custom_blocks/video_block";
+import { DividerBlock } from "./custom_blocks/divider_block";
 
 function App() {
   const editor = useBlockNote({
@@ -29,22 +42,57 @@ function App() {
       },
     },
     blockSchema: blockSchema,
+    // enableBlockNoteExtensions: true,
     slashMenuItems: customSlashMenuItemList,
   });
 
-  // Give tests a way to get prosemirror instance
+  type BlocksInSchema<TSchema extends BlockSchema> = TSchema[keyof TSchema];
+
+  function insertBlock<
+    TBlock extends BlocksInSchema<typeof blockSchema>,
+    TProps extends PropSchema
+  >(
+    block: TBlock,
+    props: TProps,
+    referenceBlock: BlockIdentifier = editor.getTextCursorPosition().block,
+    placement: "before" | "after" | "nested" = "after"
+  ) {
+    editor.insertBlocks(
+      [
+        {
+          type: block.node.name,
+          props,
+        },
+      ],
+      referenceBlock,
+      placement
+    );
+  }
+
+  const postComponentTypeToBlock = {
+    [PostComponentType.video]: VideoBlock,
+    [PostComponentType.audio]: VideoBlock,
+    [PostComponentType.image]: ImageBlock,
+    [PostComponentType.divider]: DividerBlock,
+  } as const;
+
   (window as WindowWithProseMirror).ProseMirror = editor?._tiptapEditor;
   window.addEventListener("post-editor", (event) => {
-    const castedEvent = event as CustomEvent
+    const eventDetail = (event as CustomEvent).detail as EditorEvent;
 
-    if (castedEvent.detail.type == "video") {
-      insertVideo(castedEvent.detail.url, editor)
-    }
+    if (
+      (window as any).flutterCanvasKit &&
+      eventDetail.action != PostEditorAction.create
+    )
+      return;
+    console.log(eventDetail);
 
-    if(castedEvent.detail.type == 'image'){
-      insertImage(castedEvent.detail.url, editor)
-    }
+    insertBlock(
+      postComponentTypeToBlock[eventDetail.type],
+      eventDetail.details
+    );
   });
+
   return (
     <BlockNoteView editor={editor}>
       <FormattingToolbarPositioner editor={editor} />

@@ -1,11 +1,4 @@
-import {
-  BlockNoteView,
-  useBlockNote,
-  createReactBlockSpec,
-  InlineContent,
-  ReactSlashMenuItem,
-  getDefaultReactSlashMenuItems,
-} from "@blocknote/react";
+import { createReactBlockSpec, InlineContent } from "@blocknote/react";
 
 export const ImageBlock = createReactBlockSpec({
   type: "image",
