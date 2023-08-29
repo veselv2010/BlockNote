@@ -7,7 +7,6 @@ import {
   SideMenuPositioner,
   SlashMenuPositioner,
   useBlockNote,
-  Theme,
 } from "@blocknote/react";
 import styles from "./App.module.css";
 import { customSlashMenuItemList } from "./slash_menu";
@@ -17,24 +16,19 @@ import {
   PostComponentType,
   PostEditorAction,
 } from "./custom_actions/editor_event";
-import { insertVideo } from "./custom_actions/insert_actions";
 import { ImageBlock } from "./custom_blocks/image_block";
-import {
-  BlockIdentifier,
-  BlockSchema,
-  BlockSpec,
-  PropSchema,
-} from "@blocknote/core";
+import { BlockIdentifier, BlockSchema, PropSchema } from "@blocknote/core";
 import { VideoBlock } from "./custom_blocks/video_block";
 import { DividerBlock } from "./custom_blocks/divider_block";
 
-function App() {
+function App({initialContent = ""}) {
   const editor = useBlockNote({
     onEditorContentChange: (editor) => {
       editor.blocksToMarkdown(editor.topLevelBlocks).then((e) => {
         console.log(e);
       });
     },
+    initialContent: initialContent?.length ? JSON.parse(initialContent) : undefined,
     domAttributes: {
       editor: {
         class: styles.editor,
@@ -69,6 +63,10 @@ function App() {
     );
   }
 
+  const getContent = () => {
+    return JSON.stringify(editor.topLevelBlocks);
+  };
+
   const postComponentTypeToBlock = {
     [PostComponentType.video]: VideoBlock,
     [PostComponentType.audio]: VideoBlock,
@@ -77,6 +75,7 @@ function App() {
   } as const;
 
   (window as WindowWithProseMirror).ProseMirror = editor?._tiptapEditor;
+  (window as any).getContent = getContent;
   window.addEventListener("post-editor", (event) => {
     const eventDetail = (event as CustomEvent).detail as EditorEvent;
 
@@ -85,7 +84,8 @@ function App() {
       eventDetail.action != PostEditorAction.create
     )
       return;
-    console.log(eventDetail);
+
+    console.log(eventDetail.details);
 
     insertBlock(
       postComponentTypeToBlock[eventDetail.type],

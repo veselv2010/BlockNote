@@ -1,10 +1,6 @@
 import {
-    BlockNoteView,
-    useBlockNote,
     createReactBlockSpec,
     InlineContent,
-    ReactSlashMenuItem,
-    getDefaultReactSlashMenuItems,
 } from "@blocknote/react";
 
 export const VideoBlock = createReactBlockSpec({

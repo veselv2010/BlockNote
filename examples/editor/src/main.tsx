@@ -5,15 +5,15 @@ import "./index.css";
 
 window.React = React;
 
-export function initializeEditor() {
+export function initializeEditor(initialContent?: string) {
   const root = createRoot(document.getElementById("root")!);
   root.render(
     <React.StrictMode>
-      <App />
+      <App initialContent={initialContent} />
     </React.StrictMode>
   );
 }
 
 (window as any).initializeEditor = initializeEditor;
 
-initializeEditor()
+// initializeEditor()
