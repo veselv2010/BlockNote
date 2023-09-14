@@ -29,7 +29,7 @@ function App({initialContent = "", readOnly = false}) {
       });
     },
     initialContent: initialContent?.length ? JSON.parse(initialContent) : undefined,
-    editable: readOnly,
+    editable: !readOnly,
     domAttributes: {
       editor: {
         class: styles.editor,
