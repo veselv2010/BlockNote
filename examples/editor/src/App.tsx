@@ -21,7 +21,7 @@ import { BlockIdentifier, BlockSchema, PropSchema } from "@blocknote/core";
 import { VideoBlock } from "./custom_blocks/video_block";
 import { DividerBlock } from "./custom_blocks/divider_block";
 
-function App({initialContent = ""}) {
+function App({initialContent = "", readOnly = false}) {
   const editor = useBlockNote({
     onEditorContentChange: (editor) => {
       editor.blocksToMarkdown(editor.topLevelBlocks).then((e) => {
@@ -29,6 +29,7 @@ function App({initialContent = ""}) {
       });
     },
     initialContent: initialContent?.length ? JSON.parse(initialContent) : undefined,
+    editable: readOnly,
     domAttributes: {
       editor: {
         class: styles.editor,

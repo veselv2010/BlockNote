@@ -6,6 +6,9 @@ export const ImageBlock = createReactBlockSpec({
     src: {
       default: "https://via.placeholder.com/1000",
     },
+    fileId: {
+      default: "",
+    },
   },
   containsInlineContent: true,
   render: ({ block }) => (
